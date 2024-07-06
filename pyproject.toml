@@ -1,0 +1,12 @@
+[project]
+name = "sims2"
+version = "0.2.0"
+description = "Tools for viewing The Sims 2 package files."
+
+[project.scripts]
+simidge = "sims2.simidge.__main__:main"
+simtracker = "sims2.simtracker.__main__:main"
+
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
