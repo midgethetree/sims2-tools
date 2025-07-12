@@ -14,4 +14,5 @@ A program for viewing information about your neighborhoods in a tabulated spread
 
 See docs:
 
+- [usage](/docs/simtracker/usage.md)
 - [configuration](/docs/simtracker/config.md)
