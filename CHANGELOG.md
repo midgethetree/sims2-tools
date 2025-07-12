@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0] - yyyy-mm-dd
+## [0.2.0] - 2025-07-12
 
 ### Changed
 
