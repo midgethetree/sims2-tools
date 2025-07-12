@@ -6,6 +6,7 @@ A tool for searching in .package files.
 
 See docs:
 
+- [usage](/docs/simidge/usage.md)
 - [configuration](/docs/simidge/config.md)
 
 ## SimTracker
