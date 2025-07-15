@@ -6,7 +6,7 @@ from sims2.common.config import confighome
 
 # TODO: make paths configurable via ui
 def _load_config() -> None:
-    path: Path = Path(confighome) / "simtracker/config.ini"
+    path: Path = confighome / "simtracker/config.ini"
 
     if path.exists():
         config.read(path)

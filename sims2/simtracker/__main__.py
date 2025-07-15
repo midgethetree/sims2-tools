@@ -203,7 +203,7 @@ class MainApp(Notebook):
                 continue
 
             nhood: Path
-            for nhood in Path(nhoods_folder).iterdir():
+            for nhood in nhoods_folder.iterdir():
                 if nhood.name == "Tutorial":
                     continue
                 if nhood.is_dir():
