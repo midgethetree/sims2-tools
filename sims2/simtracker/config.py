@@ -18,7 +18,7 @@ def _load_config() -> None:
     )
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w+", encoding="utf-8") as file:
+    with path.open("w", encoding="utf-8") as file:
         config.write(file)
 
 
