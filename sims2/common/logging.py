@@ -1,12 +1,19 @@
 import logging
 import sys
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from types import TracebackType
 
 
 def config_logging() -> None:
     logging.basicConfig(
-        filename=Path(__file__).parent.parent / "error.log",
+        handlers=[
+            RotatingFileHandler(
+                Path(__file__).parent.parent / "error.log",
+                maxBytes=100000,
+                backupCount=5,
+            ),
+        ],
         format="%(asctime)s %(name)s:%(funcName)s:%(lineno)d\n%(levelname)s %(message)s\n",
         level=logging.INFO,
     )
