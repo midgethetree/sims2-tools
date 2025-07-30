@@ -1,10 +1,13 @@
 import xml.etree.ElementTree as ET
 from binascii import hexlify
+from logging import Logger, getLogger
 from pathlib import Path
 
 from sims2.dbpf import Resource, ResourceHeader, get_headers
 from sims2.simtracker.config import config, config_traits
 from sims2.simtracker.sim import Family, Sim, SupernaturalFlags
+
+logger: Logger = getLogger(__name__)
 
 sims: dict[bytes, Sim] = {}
 families: dict[bytes, Family] = {}
@@ -17,6 +20,7 @@ def search_nhood(nhood: str, nhoods_folder: Path) -> None:
     directory: Path = nhoods_folder / nhood
 
     with (directory / f"{nhood}_Neighborhood.package").open("rb") as file:
+        logger.debug("searching neighborhood %s", nhood)
         package: bytes = file.read()
 
     guid2nid: dict[bytes, bytes] = _search_nhood_pkg(nhood, package)
@@ -257,6 +261,7 @@ def _search_nhood_chars(directory: Path, guid2nid: dict[bytes, bytes]) -> None:
     char: Path
     for char in (directory / "Characters").iterdir():
         with char.open("rb") as file:
+            logger.debug("reading file: %s", char.name)
             package: bytes = file.read()
 
         name: list[bytes] = []
@@ -287,6 +292,7 @@ def _search_nhood_lots(directory: Path, nhood: str) -> None:
         lot: int = family.lot
         if lot > 0:
             with (directory / f"{nhood}_Lot{lot}.package").open("rb") as file:
+                logger.debug("searching lot %s in neighborhood %s", lot, nhood)
                 package = file.read()
 
             header: ResourceHeader

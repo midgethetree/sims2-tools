@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from binascii import unhexlify
 from dataclasses import dataclass
 from enum import Enum
+from logging import Logger, getLogger
 from pathlib import Path
 from tkinter import (
     DISABLED,
@@ -34,6 +35,8 @@ from sims2.simidge.search import (
     PrintResource,
     ResourceSearch,
 )
+
+logger: Logger = getLogger(__name__)
 
 INSTANCE_LENGTH: int = 8
 INSTANCE_LENGTH_SHORT: int = 4
@@ -383,6 +386,7 @@ class MainApp(Frame):
             Path(filename).parent / xmlroot.findall("./packedfile")[0].attrib["name"]
         )
         with path.open("rb") as file:
+            logger.debug("reading file: %s", path.name)
             resource: bytes = file.read()
 
         resources: ResourceSearch = ResourceSearch(

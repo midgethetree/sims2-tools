@@ -134,6 +134,7 @@ class ResourceSearch:
             path = Path(path)
 
         with path.open("rb") as file:
+            logger.debug("reading file: %s", path.name)
             package: bytes = file.read()
 
         if int.from_bytes(package[36:40], byteorder="little") == 0:
@@ -181,6 +182,7 @@ class ResourceSearch:
             path = Path(path)
 
         with path.open("rb") as file:
+            logger.debug("reading file: %s", path.name)
             package: bytes = file.read()
 
         if int.from_bytes(package[36:40], byteorder="little") == 0:
