@@ -81,7 +81,7 @@ class MainApp(Frame):
         self.button_clear: Button = Button(
             frame_bottom,
             text="Clear Results",
-            command=self.clear,
+            command=self.clear_search_results,
             state=DISABLED,
         )
         self.button_clear.pack(side=LEFT)
@@ -228,7 +228,7 @@ class MainApp(Frame):
 
         return var_file
 
-    def clear(self) -> None:
+    def clear_search_results(self) -> None:
         self.button_clear["state"] = DISABLED
         self.search_results["state"] = NORMAL
         self.search_results.delete("1.0", END)
@@ -240,7 +240,7 @@ class MainApp(Frame):
         self.search_results["state"] = DISABLED
 
     def find_conflicts(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
             [b"NOCB", b"VAHB", b"SPZG", b"BATT", b"sATT", b"#RTS", b"DJBO", b"fJBO"],
@@ -254,7 +254,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_conflicts_file(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         mod = askopenfilename(
             initialdir=config.get("paths", "downloads"),
@@ -276,7 +276,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_conflicts_folder(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
             [b"NOCB", b"VAHB", b"BATT", b"sATT", b"#RTS", b"DJBO", b"fJBO"],
@@ -290,7 +290,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_dup_meshes(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
             [b"CDMG"],
@@ -301,7 +301,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_translations(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
             [b"SSTC", b"sATT", b"#RTS"],
@@ -329,7 +329,7 @@ class MainApp(Frame):
         min_versions: int = 1,
         max_versions: float = float("inf"),
     ) -> None:
-        self.clear()
+        self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch([b"NOCB", b"VAHB", b"GPJ"])
 
@@ -353,7 +353,7 @@ class MainApp(Frame):
         )
 
     def compare_resources(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         filename: str = askopenfilename(
             initialdir=config.get("paths", "downloads"),
@@ -483,7 +483,7 @@ class MainApp(Frame):
         return None
 
     def search(self) -> None:
-        self.clear()
+        self.clear_search_results()
 
         rtype: bytes
         filter_type: list[bytes]
