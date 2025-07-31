@@ -8,7 +8,7 @@ logger: Logger = getLogger(__name__)
 GROUP_PREFIX: bytes = b"0x7F"
 
 
-class PrintResource(Resource):
+class CompResource(Resource):
     def __init__(
         self,
         package: bytes,
@@ -66,7 +66,7 @@ class ResourceSearch:
     ) -> None:
         self._dict: dict[
             bytes,
-            dict[bytes, dict[bytes, dict[bytes, PrintResource]]],
+            dict[bytes, dict[bytes, dict[bytes, CompResource]]],
         ] = {}
         for rtype in filter_type:
             self._dict[rtype] = {}
@@ -150,7 +150,7 @@ class ResourceSearch:
             if not self.validate_instance(header.instance):
                 continue
 
-            resource: PrintResource = PrintResource(package, header, limit)
+            resource: CompResource = CompResource(package, header, limit)
 
             if self.validate_resource(resource) is False:
                 continue
@@ -162,7 +162,7 @@ class ResourceSearch:
                 break
 
     @staticmethod
-    def validate_strs(resource: PrintResource) -> bool:
+    def validate_strs(resource: CompResource) -> bool:
         num: int = int.from_bytes(resource.contents[66:68], byteorder="little")
         strings: list[bytes] = resource.contents[68:].split(b"\x00\x01")
         if strings[-1][-2:] == b"\x00\x00":
@@ -198,7 +198,7 @@ class ResourceSearch:
             if not self.validate_instance(header.instance):
                 continue
 
-            resource: PrintResource = PrintResource(package, header, limit)
+            resource: CompResource = CompResource(package, header, limit)
 
             if self.validate_resource(resource) is False:
                 continue
@@ -208,13 +208,13 @@ class ResourceSearch:
 
     def append(
         self,
-        v: PrintResource,
+        v: CompResource,
         filename: str,
         resource: bytes,
         *,
         unique: bool = True,
     ) -> bool:
-        if not isinstance(v, PrintResource):
+        if not isinstance(v, CompResource):
             return False
         if v.rtype not in self._dict:
             return False
@@ -235,8 +235,8 @@ class ResourceSearch:
             self._dict[v.rtype][v.group][v.classid][v.instance] = v
         return True
 
-    def get_items(self) -> list[PrintResource]:
-        items: list[PrintResource] = []
+    def get_items(self) -> list[CompResource]:
+        items: list[CompResource] = []
         for rtype in self._dict.values():
             for group in rtype.values():
                 for classid in group.values():
@@ -254,7 +254,7 @@ class ResourceSearch:
     ) -> str:
         chars: str = ""
         count: int = 0
-        resource: PrintResource
+        resource: CompResource
         for resource in self.get_items():
             if (
                 len(resource.files) >= min_files

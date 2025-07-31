@@ -32,7 +32,7 @@ from sims2.dbpf import LIMIT_FOR_CONFLICT, ResourceHeader
 from sims2.simidge._config import config
 from sims2.simidge.search import (
     GROUP_PREFIX,
-    PrintResource,
+    CompResource,
     ResourceSearch,
 )
 
@@ -395,7 +395,7 @@ class MainApp(Frame):
             filter_instance=instance,
         )
         resources.append(
-            PrintResource(
+            CompResource(
                 resource,
                 ResourceHeader(
                     b"".join(
