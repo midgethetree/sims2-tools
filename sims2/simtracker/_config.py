@@ -5,11 +5,15 @@ from sims2.common.config import confighome
 
 
 # TODO: make paths configurable via ui
-def _load_config() -> None:
-    path: Path = confighome / "simtracker/config.ini"
+def save_config() -> None:
+    """Save config file."""
+    with _path.open("w", encoding="utf-8") as file:
+        config.write(file)
 
-    if path.exists():
-        config.read(path)
+
+def _load_config() -> None:
+    if _path.exists():
+        config.read(_path)
         return
 
     config["paths"]["1"] = str(
@@ -17,11 +21,11 @@ def _load_config() -> None:
         / "Documents/EA Games/The Sims™ 2 Ultimate Collection/Neighborhoods",
     )
 
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as file:
-        config.write(file)
+    save_config()
 
 
+_path: Path = confighome / "simtracker/config.ini"
+_path.parent.mkdir(parents=True, exist_ok=True)
 config: ConfigParser = ConfigParser()
 config.read(Path(__file__).parent / "config.ini")
 _load_config()

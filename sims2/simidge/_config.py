@@ -5,11 +5,15 @@ from sims2.common.config import confighome
 
 
 # TODO: make paths configurable via ui
-def _load_config() -> None:
-    path: Path = confighome / "simidge/config.ini"
+def save_config() -> None:
+    """Save config file."""
+    with _path.open("w", encoding="utf-8") as file:
+        config.write(file)
 
-    if path.exists():
-        config.read(path)
+
+def _load_config() -> None:
+    if _path.exists():
+        config.read(_path)
         return
 
     config.read_dict(
@@ -27,10 +31,11 @@ def _load_config() -> None:
             },
         },
     )
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as file:
-        config.write(file)
+
+    save_config()
 
 
+_path: Path = confighome / "simidge/config.ini"
+_path.parent.mkdir(parents=True, exist_ok=True)
 config: ConfigParser = ConfigParser()
 _load_config()
