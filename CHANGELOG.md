@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased - yyyy-mm-dd
+
+### Changed
+
+- error logs are now generated in simidge/simtracker folders in the following locations instead of the same folder as simidge/simtracker itself and will rotate when they get too big:
+  - AppData\Roaming (Windows)
+  - $XDG_STATE_HOME (Linux/MacOS)
+  - ~/.local/state (Linux/MacOS if $XDG_STATE_HOME is not set)
+
+### Added
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
 ## [0.2.0] - 2025-07-12
 
 ### Changed
