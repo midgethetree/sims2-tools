@@ -529,7 +529,7 @@ class MainApp(Frame):
 
 
 def main() -> None:
-    config_logging()
+    config_logging("simidge")
 
     root: Tk = Tk()
     _app: MainApp = MainApp(root)

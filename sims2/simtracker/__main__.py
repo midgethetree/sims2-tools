@@ -464,7 +464,7 @@ class MainApp(Notebook):
 
 
 def main() -> None:
-    config_logging()
+    config_logging("simtracker")
 
     root: Tk = Tk()
     _app: MainApp = MainApp(root)
