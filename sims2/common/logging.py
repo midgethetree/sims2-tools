@@ -10,6 +10,7 @@ def config_logging() -> None:
         handlers=[
             RotatingFileHandler(
                 Path(__file__).parent.parent / "error.log",
+                delay=True,
                 maxBytes=100000,
                 backupCount=5,
             ),
