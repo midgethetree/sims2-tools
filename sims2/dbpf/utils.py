@@ -1,3 +1,5 @@
+"""Utilities for reading The Sims 2 dbpf (.package) files."""
+
 from binascii import hexlify
 from dataclasses import dataclass
 
@@ -15,7 +17,23 @@ types2name: dict[bytes, bytes] = {
 
 @dataclass
 class ResourceHeader:
+    """Class describing a resource within a dbpf file.
+
+    Attributes:
+        rtype: Type of resource.
+        group: Group containing the resource.
+        instance: Instance of the resource.
+        classid: Class ID (aka instance (high)) of the resource.
+        index: Location of the resource within package.
+        length: Length of the resource.
+    """
+
     def __init__(self, header: bytes) -> None:
+        """Initialize a resource header from  bytes.
+
+        Args:
+            header: The raw resource header as seen in the dbpf file.
+        """
         self.rtype: bytes = header[:4]
         self.rtype = types2name.get(self.rtype, self.rtype)
         self.group: bytes = header[4:8]
@@ -32,12 +50,30 @@ class ResourceHeader:
 
 
 class Resource:  # pylint: disable=too-few-public-methods
+    """Resource inside a dbpf file.
+
+    Attributes:
+        rtype: Type of resource.
+        group: Group containing the resource.
+        instance: Instance of the resource.
+        classid: Class ID (aka instance (high)) of the resource.
+        contents: Contents of the resource.
+        name: Name of the resource.
+    """
+
     def __init__(
         self,
         package: bytes,
         header: ResourceHeader,
         limit: float = float("inf"),
     ) -> None:
+        """Initialize a resource within a package from its header.
+
+        Args:
+            package: Contents of dbpf file containing resource.
+            header: Header describing resource.
+            limit: Limit on how much of the contents of the resource to store.
+        """
         self.rtype: bytes = header.rtype
         self.group: bytes = header.group
         self.instance: bytes = header.instance
@@ -106,6 +142,11 @@ class Resource:  # pylint: disable=too-few-public-methods
         self.contents = x
 
     def print(self) -> str:
+        """Get information about the resource in a printable string.
+
+        Returns:
+            String describing the resource.
+        """
         chars: str = ""
         if self.name is not None:
             chars += f"{self.name}\n"
@@ -116,6 +157,14 @@ class Resource:  # pylint: disable=too-few-public-methods
 
 
 def get_headers(package: bytes) -> list[ResourceHeader]:
+    """Get all headers in package.
+
+    Args:
+        package: Contents of dbpf file to search for headers.
+
+    Returns:
+        List of resource headers.
+    """
     start: int = int.from_bytes(package[40:44], byteorder="little")
     stop: int = start + int.from_bytes(package[44:48], byteorder="little")
     step: int = int((stop - start) / int.from_bytes(package[36:40], byteorder="little"))

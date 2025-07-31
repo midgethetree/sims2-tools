@@ -1,3 +1,5 @@
+"""A program for viewing information about your neighborhoods in a tabulated spreadsheet."""
+
 from logging import Logger, getLogger
 from pathlib import Path
 from tkinter import (
@@ -20,7 +22,14 @@ logger: Logger = getLogger(__name__)
 
 # pylint: disable=too-many-ancestors
 class MainApp(Notebook):
+    """The main GUI application."""
+
     def __init__(self, master: Tk) -> None:
+        """Initialize the main GUI application with a Tkinter root.
+
+        Args:
+            master: Tkinter widget representing window.
+        """
         master.geometry("960x1080")
         master.title("SimTracker")
 
@@ -245,6 +254,12 @@ class MainApp(Notebook):
         self.trees[text] = tree
 
     def search(self, nhood: str, nhoods_folder: Path) -> None:
+        """Search neighborhood for information about sims and families.
+
+        Args:
+            nhood: Identifier of neighborhood.
+            nhoods_folder: Folder containing neighborhood.
+        """
         tree: Treeview
         for tree in self.trees.values():
             tree.delete(*tree.get_children())
@@ -464,6 +479,7 @@ class MainApp(Notebook):
 
 
 def main() -> None:
+    """Main function for running simtracker."""
     config_logging("simtracker")
 
     root: Tk = Tk()

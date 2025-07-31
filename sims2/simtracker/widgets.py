@@ -1,3 +1,4 @@
+"""Custom widgets for SimTracker."""
 # pylint: disable=too-many-ancestors
 
 from tkinter import (
@@ -18,6 +19,8 @@ tabs: list[Treeview] = []
 
 
 class ImageButton(Button):
+    """Tk Button widget with image on it."""
+
     def __init__(
         self,
         master: Misc | None,
@@ -27,6 +30,16 @@ class ImageButton(Button):
         imgheight: int | None,
         **kwargs: Any,
     ) -> None:
+        """Construct an image button with parent master and image.
+
+        Args:
+            master: Tk widget containing this image button.
+            *args: Other positional arguments for button.
+            imgfile: Filepath of image.
+            imgwidth: Width to display image with.
+            imgheight: Height to display image with.
+            **kwargs: Other keyword arguments for button and image.
+        """
         if "image" in kwargs:
             self.image: PhotoImage = kwargs.pop("image")
         elif imgfile:
@@ -40,7 +53,16 @@ class ImageButton(Button):
 
 
 class SortTree(Treeview):
+    """Tk Treeview widget that can be sorted."""
+
     def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+        """Construct a sorttree with parent master, columns, and widths.
+
+        Args:
+            master: Tk frame containing this treeview.
+            columns: List of column names.
+            widths: List of column widths.
+        """
         scrollbar = Scrollbar(master)
         scrollbar.pack(side=RIGHT, fill=Y)
 
@@ -75,6 +97,15 @@ class SortTree(Treeview):
         *,
         reverse: bool,
     ) -> list[tuple[str | int, str]]:
+        """Get sorted columns.
+
+        Args:
+            column: Name of column to sort by.
+            reverse: Whether to sort in reverse.
+
+        Returns:
+            Sorted list of tuples with value and identifier for each row in column.
+        """
         if column == "#0":
             cols: list[tuple[str | int, str]] = [
                 (self.item(i)["text"], i) for i in self.get_children()
@@ -88,14 +119,21 @@ class SortTree(Treeview):
         return cols
 
     def sort_column(self, _column: str, *, reverse: bool) -> None:
-        pass
+        """Sort by column.
+
+        Args:
+            column: Name of column to sort by.
+            reverse: Whether to sort in reverse.
+        """
 
     def right_click(self, event: Event) -> None:
+        """On right click, identify column heading clicked on and sort by that column."""
         if self.identify("region", event.x, event.y) == "heading":
             column: str = self.identify_column(event.x)
             self.sort_column(column, reverse=True)
 
     def pack(self, *args: Any, **kwargs: Any) -> None:
+        """Pack configure."""
         expand: bool = kwargs.pop("expand", True)
         fill: Literal["none", "x", "y", "both"] = kwargs.pop("fill", BOTH)
 
@@ -103,12 +141,22 @@ class SortTree(Treeview):
 
 
 class SimsTree(SortTree):
+    """Tk Treeview widget that can be sorted together with other SimsTree widgets."""
+
     def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+        """Construct a sorttree with parent master, columns, and widths.
+
+        Args:
+            master: Tk frame containing this treeview.
+            columns: List of column names.
+            widths: List of column widths.
+        """
         super().__init__(master, columns, widths)
         self.bind("<Button-2>", self.unsort)
 
     @staticmethod
     def unsort(_event: Event) -> None:
+        """Undo any sorting."""
         tab: Treeview
         for tab in tabs:
             if not isinstance(tab, SimsTree):
@@ -119,6 +167,12 @@ class SimsTree(SortTree):
                 tab.move(k, "", j)
 
     def sort_column(self, column: str, *, reverse: bool) -> None:
+        """Sort by column.
+
+        Args:
+            column: Name of column to sort by.
+            reverse: Whether to sort in reverse.
+        """
         cols: list[tuple[str | int, str]] = super().get_sorted_columns(
             column,
             reverse=reverse,
@@ -137,11 +191,21 @@ class SimsTree(SortTree):
 
 
 class NonSimsTree(SortTree):
+    """Tk Treeview widget that can be sorted independently of other SortTree widgets."""
+
     def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+        """Construct a sorttree with parent master, columns, and widths.
+
+        Args:
+            master: Tk frame containing this treeview.
+            columns: List of column names.
+            widths: List of column widths.
+        """
         super().__init__(master, columns, widths)
         self.bind("<Button-2>", self.unsort)
 
     def unsort(self, _event: Event) -> None:
+        """Undo any sorting."""
         children: list[str] = list(self.get_children())
         children.sort()
 
@@ -151,6 +215,12 @@ class NonSimsTree(SortTree):
             self.move(k, "", j)
 
     def sort_column(self, column: str, *, reverse: bool) -> None:
+        """Sort by column.
+
+        Args:
+            column: Name of column to sort by.
+            reverse: Whether to sort in reverse.
+        """
         cols: list[tuple[str | int, str]] = self.get_sorted_columns(
             column,
             reverse=reverse,

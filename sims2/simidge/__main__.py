@@ -1,3 +1,5 @@
+"""A tool for searching in .package files."""
+
 import xml.etree.ElementTree as ET
 from binascii import unhexlify
 from dataclasses import dataclass
@@ -44,6 +46,16 @@ INSTANCE_LENGTH_SHORT: int = 4
 
 @dataclass
 class SearchFilter:
+    """Filters to use when searching a package file.
+
+    Attributes:
+        rtype: Type of resources to search for.
+        group: Group of resources to search for.
+        instance: Instance of resources to search for.
+        name: String to search for in resource names.
+        target: String to search for in resource contents.
+    """
+
     rtype: StringVar
     group: StringVar
     instance: StringVar
@@ -52,6 +64,8 @@ class SearchFilter:
 
 
 class SearchType(Enum):
+    """Enum describing where to search."""
+
     OBJECTS = 1
     DOWNLOADS = 2
     FILES = 3
@@ -59,7 +73,14 @@ class SearchType(Enum):
 
 
 class MainApp(Frame):
+    """The main GUI application."""
+
     def __init__(self, master: Tk) -> None:
+        """Initialize the main GUI application with a Tkinter root.
+
+        Args:
+            master: Tkinter widget representing window.
+        """
         master.geometry("640x480")
         master.title("SiMidge")
 
@@ -229,17 +250,20 @@ class MainApp(Frame):
         return var_file
 
     def clear_search_results(self) -> None:
+        """Clear search results."""
         self.button_clear["state"] = DISABLED
         self.search_results["state"] = NORMAL
         self.search_results.delete("1.0", END)
 
     def print_search_results(self, chars: str) -> None:
+        """Print search results."""
         self.button_clear["state"] = NORMAL
         self.search_results["state"] = NORMAL
         self.search_results.insert(END, chars)
         self.search_results["state"] = DISABLED
 
     def find_conflicts(self) -> None:
+        """Find conflicting mods in downloads folder."""
         self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
@@ -254,6 +278,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_conflicts_file(self) -> None:
+        """Find mods conflicting with a selected package."""
         self.clear_search_results()
 
         mod = askopenfilename(
@@ -276,6 +301,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_conflicts_folder(self) -> None:
+        """Find conflicting mods in selected folder."""
         self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
@@ -290,6 +316,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_dup_meshes(self) -> None:
+        """Find duplicate meshes in downloads folder."""
         self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
@@ -301,6 +328,7 @@ class MainApp(Frame):
         self.print_search_results(resources.print_resources(min_files=2))
 
     def find_translations(self) -> None:
+        """Find string resources that have translations, empty strings, descriptions, or can otherwise be cleaned by SimPE."""
         self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch(
@@ -329,6 +357,7 @@ class MainApp(Frame):
         min_versions: int = 1,
         max_versions: float = float("inf"),
     ) -> None:
+        """Compare resources in selected packages."""
         self.clear_search_results()
 
         resources: ResourceSearch = ResourceSearch([b"NOCB", b"VAHB", b"GPJ"])
@@ -353,6 +382,7 @@ class MainApp(Frame):
         )
 
     def compare_resources(self) -> None:
+        """Compare selected resource with original copy in objects.package."""
         self.clear_search_results()
 
         filename: str = askopenfilename(
@@ -483,6 +513,7 @@ class MainApp(Frame):
         return None
 
     def search(self) -> None:
+        """Search for resources in package file(s)."""
         self.clear_search_results()
 
         rtype: bytes
@@ -529,6 +560,7 @@ class MainApp(Frame):
 
 
 def main() -> None:
+    """Main function for running SiMidge."""
     config_logging("simidge")
 
     root: Tk = Tk()

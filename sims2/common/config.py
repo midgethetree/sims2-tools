@@ -1,3 +1,5 @@
+"""Common utilities shared between SiMidge and SimTracker for handling configuration."""
+
 import os
 from os import environ
 from pathlib import Path

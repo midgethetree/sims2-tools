@@ -1,3 +1,5 @@
+"""Classes for handling TS2 Sims and Families."""
+
 from binascii import hexlify
 from dataclasses import dataclass, field
 from enum import IntFlag, auto
@@ -8,6 +10,15 @@ from sims2.simtracker._config import config, config_traits
 
 @dataclass
 class SimGene:
+    """Genes for a Sim genetic trait.
+
+    Attributes:
+        dominant: Dominant (expressed) gene that sim can pass on.
+        recessive: Recessive (carried) gene that sim can pass on.
+        range1: For skins, darker inherited gene.
+        range2: For skins, lighter inherited gene.
+    """
+
     dominant: str = ""
     recessive: str = ""
     range1: str = ""
@@ -16,6 +27,14 @@ class SimGene:
 
 @dataclass
 class SimGenes:
+    """All of a Sim's genes.
+
+    Attributes:
+        skin: Sim's skin genes.
+        hair: Sim's hair genes.
+        eyes: Sims's eye genes.
+    """
+
     skin: SimGene = field(default_factory=SimGene)
     hair: SimGene = field(default_factory=SimGene)
     eyes: SimGene = field(default_factory=SimGene)
@@ -23,6 +42,16 @@ class SimGenes:
 
 @dataclass
 class SimPersonality:
+    """A Sim's personality.
+
+    Attributes:
+        nice: How nice/grouchy a sim is.
+        active: How active/lazy a sim is.
+        playful: How playful/serious a sim is.
+        outgoing: How outgoing/shy a sim is.
+        neat: How neat/sloppy a sim is.
+    """
+
     nice: int
     active: int
     playful: int
@@ -32,6 +61,14 @@ class SimPersonality:
 
 @dataclass
 class SimCareer:
+    """A Sim's career.
+
+    Attributes:
+        career: Name of career.
+        title: Name of job title.
+        level: Level in career.
+    """
+
     career: str
     title: str
     level: int
@@ -39,6 +76,18 @@ class SimCareer:
 
 @dataclass
 class SimSkills:
+    """A Sim's skills.
+
+    Attributes:
+        cleaning: Cleaning skill level.
+        cooking: Cooking skill level.
+        charisma: Charisma skill level.
+        mechanical: Mechanical skill level.
+        creativity: Creativity skill level.
+        body: Body skill level.
+        logic: Logic skill level.
+    """
+
     cleaning: int = 0
     cooking: int = 0
     charisma: int = 0
@@ -51,6 +100,28 @@ class SimSkills:
 @dataclass
 # pylint: disable=too-many-instance-attributes
 class SimInterests:
+    """A sim's interests.
+
+    Attributes:
+        politics: Interest in politics.
+        money: Interest in money.
+        environment: Interest in environment.
+        crime: Interest in crime.
+        entertainment: Interest in entertainment.
+        culture: Interest in culture.
+        food: Interest in food.
+        health: Interest in health.
+        fashion: Interest in fashion.
+        sports: Interest in sports.
+        paranormal: Interest in paranormal.
+        travel: Interest in travel.
+        work: Interest in work.
+        weather: Interest in weather.
+        animals: Interest in animals.
+        school: Interest in school.
+        toys: Interest in toys.
+    """
+
     politics: int = 0
     money: int = 0
     environment: int = 0
@@ -74,6 +145,21 @@ class SimInterests:
 @dataclass
 # pylint: disable=too-many-instance-attributes
 class SimHobbies:
+    """A Sim's hobby enthusiasm.
+
+    Attributes:
+        cuisine: Enthusiasm in cuisine.
+        art: Enthusiasm in art.
+        lit: Enthusiasm in lit.
+        sports: Enthusiasm in sports.
+        games: Enthusiasm in games.
+        nature: Enthusiasm in nature.
+        tinkering: Enthusiasm in tinkering.
+        fitness: Enthusiasm in fitness.
+        science: Enthusiasm in science.
+        music: Enthusiasm in music.
+    """
+
     cuisine: int = 0
     art: int = 0
     lit: int = 0
@@ -87,6 +173,8 @@ class SimHobbies:
 
 
 class PersonFlags1(IntFlag):
+    """Flags stored in PersonFlags1."""
+
     ZOMBIE = 1
     VAMPIRE = 4
     WEREWOLF = 32
@@ -97,10 +185,14 @@ class PersonFlags1(IntFlag):
 
 
 class PersonFlags2(IntFlag):
+    """Flags stored in PersonFlags2."""
+
     FAIRY = 32
 
 
 class SupernaturalFlags(IntFlag):
+    """Flags for different supernatural lifestates."""
+
     GHOST = auto()
     SERVO = auto()
     ZOMBIE = auto()
@@ -114,6 +206,8 @@ class SupernaturalFlags(IntFlag):
 
 
 class TurnOns1(IntFlag):
+    """Flags for the first group of turn ons."""
+
     COLOGNE = auto()
     STINK = auto()
     FAT = auto()
@@ -131,6 +225,8 @@ class TurnOns1(IntFlag):
 
 
 class TurnOns2(IntFlag):
+    """Flags for the second group of turn ons."""
+
     BLONDE = auto()
     RED = auto()
     BROWN = auto()
@@ -150,6 +246,8 @@ class TurnOns2(IntFlag):
 
 
 class TurnOns3(IntFlag):
+    """Flags for the third group of turn ons."""
+
     ROBOTS = auto()
     PLANTSIM = auto()
     WEREWOLF = auto()
@@ -158,7 +256,40 @@ class TurnOns3(IntFlag):
 
 # pylint: disable=too-many-instance-attributes
 class Sim:
+    """A TS2 Sim.
+
+    Attributes:
+        name: Name of the Sim.
+        bio: The Sim's biography.
+        genes: The Sim's genes.
+        personality: The Sim's personality.
+        skills: The Sim's skills.
+        sexuality: The Sim's gender preference.
+        asp: The SIm's aspirations.
+        ltw: The Sim's lifetime want.
+        fam: The id of the Sim's family.
+        spnflags: Flags specifying supernatural lifestate of the sim.
+        species: The Sim's species.
+        job: The Sim's job.
+        age: The Sim's age (in in-game days).
+        death: The age the Sim will be when they die of old age.
+        interests: The Sim's interests.
+        major: The Sim's major.
+        to_traits: The Sim's turn on traits.
+        tos: The Sim's turn ons and turn off.
+        hobbies: The Sim's hobbies.
+        oth: The Sim's one true hobby.
+        lta: The Sim's lifetime aspiration score.
+        lta_benefits: The Sim's unspend lifetime benefits points.
+        traits: The Sim's 3t2 traits.
+    """
+
     def __init__(self, resource: bytes) -> None:
+        """Initialize Sim from SDSC resource.
+
+        Args:
+            resource: Contents of SDSC.
+        """
         self.name: list[str] = ["Unknown", "Unknown"]
         self.bio: str = ""
         self.genes: SimGenes = SimGenes()
@@ -424,6 +555,10 @@ class Sim:
         )
 
     def set_aspirations(self) -> None:
+        """Set aspirations.
+
+        Aspirations are stored together as flags with the secondary aspiration being determined by a separate token, so once SimTracker has finished searching inventories call this method to properly convert the stored flags/token value into strings.
+        """
         asp1: int | str = self.asp[0]
         asp2: int | str = self.asp[1]
         if isinstance(asp1, str):
@@ -438,16 +573,45 @@ class Sim:
             self.asp[0] = config.get("aspirations", str(int(log2(asp1))))
 
     def has_turnon_trait(self, to: int, to_group: int) -> bool:
+        """Check if the Sim fulfills a turn on.
+
+        Args:
+            to: Flag of turn on to check.
+            to_group: Whether the turn on is in group 1, 2, or 3.
+
+        Returns:
+            True if the Sim fulfills the turn on, otherwise false.
+        """
         if to_group < 0 or to_group > len(self.to_traits):
             return False
         return bool(self.to_traits[to_group] & to)
 
     def is_supernatural(self, spn: int) -> bool:
+        """Check if the Sim is a type of supernatural.
+
+        Args:
+            spn: Flag of type of supernatural to check.
+
+        Returns:
+            True if the Sim is that type of supernatural, otherwise false.
+        """
         return bool(self.spnflags & spn)
 
 
 @dataclass
 class Family:
+    """A TS2 Sim family.
+
+    Attributes:
+        lot: ID of the lot the family lives in.
+        day: In-game days running of the lot the family lives in.
+        time: In-game time of day that the lot the family lives in was last saved at.
+        season: In-game season that the lot the family lives in was last saved in.
+        ssnlngth: In-game days left in season for the lot the family lives in.
+        name: Name of the family.
+        desc: Description of the family.
+    """
+
     lot: int
     day: int | None = None
     time: str = ""

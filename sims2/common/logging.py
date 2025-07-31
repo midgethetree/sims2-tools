@@ -1,3 +1,5 @@
+"""Common utilities shared between SiMidge and SimTracker for handling error logging."""
+
 import logging
 import os
 import sys
@@ -8,6 +10,7 @@ from types import TracebackType
 
 
 def config_logging(appname: str) -> None:
+    """Configure the logging system."""
     if "APPDATA" in environ:
         statehome: Path = Path(environ["APPDATA"])
     elif "XDG_STATE_HOME" in os.environ:
@@ -38,6 +41,13 @@ def handle_exception(
     value: BaseException,
     tb: TracebackType | None,
 ) -> None:
+    """Handle an exception by logging it.
+
+    Args:
+        exception_type: Type of exception.
+        value: Exception.
+        tb: Traceback.
+    """
     if issubclass(exception_type, KeyboardInterrupt):
         sys.__excepthook__(exception_type, value, tb)
         return

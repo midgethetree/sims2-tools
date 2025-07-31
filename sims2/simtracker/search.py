@@ -1,3 +1,5 @@
+"""Search neighborhood package for information about sims and families."""
+
 import xml.etree.ElementTree as ET
 from binascii import hexlify
 from logging import Logger, getLogger
@@ -14,6 +16,12 @@ families: dict[bytes, Family] = {}
 
 
 def search_nhood(nhood: str, nhoods_folder: Path) -> None:
+    """Search neighborhood for information about sims and families.
+
+    Args:
+        nhood: Identifier of neighborhood.
+        nhoods_folder: Folder containing neighborhood.
+    """
     sims.clear()
     families.clear()
 
