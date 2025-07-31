@@ -4,7 +4,7 @@ from logging import Logger, getLogger
 from pathlib import Path
 
 from sims2.dbpf import Resource, ResourceHeader, get_headers
-from sims2.simtracker.config import config, config_traits
+from sims2.simtracker._config import config, config_traits
 from sims2.simtracker.sim import Family, Sim, SupernaturalFlags
 
 logger: Logger = getLogger(__name__)

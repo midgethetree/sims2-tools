@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from enum import IntFlag, auto
 from math import log2
 
-from sims2.simtracker.config import config, config_traits
+from sims2.simtracker._config import config, config_traits
 
 
 @dataclass

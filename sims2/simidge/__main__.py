@@ -29,7 +29,7 @@ from typing import Any
 
 from sims2.common.logging import config_logging, handle_exception
 from sims2.dbpf import LIMIT_FOR_CONFLICT, ResourceHeader
-from sims2.simidge.config import config
+from sims2.simidge._config import config
 from sims2.simidge.search import (
     GROUP_PREFIX,
     PrintResource,

@@ -10,7 +10,7 @@ from tkinter import (
 from tkinter.ttk import Notebook, Style, Treeview
 
 from sims2.common.logging import config_logging, handle_exception
-from sims2.simtracker.config import config_traits, folders_nhoods
+from sims2.simtracker._config import config_traits, folders_nhoods
 from sims2.simtracker.search import families, search_nhood, sims
 from sims2.simtracker.sim import Family, Sim, SupernaturalFlags, TurnOns1
 from sims2.simtracker.widgets import ImageButton, NonSimsTree, SimsTree
