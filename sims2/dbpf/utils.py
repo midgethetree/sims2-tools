@@ -31,7 +31,7 @@ class ResourceHeader:
         self.length: int = int.from_bytes(header[-4:], byteorder="little")
 
 
-class Resource:
+class Resource:  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         package: bytes,
@@ -51,7 +51,7 @@ class Resource:
             else:
                 self.contents = package[header.index : header.index + header.length]
             if int.from_bytes(self.contents[:4], byteorder="little") == header.length:
-                self.decompress(limit)
+                self._decompress(limit)
 
         if limit == 0:
             self.name: str = ""
@@ -61,7 +61,7 @@ class Resource:
             except UnicodeDecodeError:
                 self.name = ""
 
-    def decompress(self, limit: float = float("inf")) -> None:
+    def _decompress(self, limit: float = float("inf")) -> None:
         x: bytes = b""
         index: int = 9
         while index < len(self.contents):
