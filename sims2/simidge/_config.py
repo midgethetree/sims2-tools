@@ -4,7 +4,6 @@ from pathlib import Path
 from sims2.common.config import confighome
 
 
-# TODO: make paths configurable via ui
 def save_config() -> None:
     """Save config file."""
     with _path.open("w", encoding="utf-8") as file:

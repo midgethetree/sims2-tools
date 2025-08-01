@@ -2,6 +2,8 @@
 
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
+import tkinter.simpledialog
 import xml.etree.ElementTree as ET
 from binascii import unhexlify
 from dataclasses import dataclass
@@ -12,7 +14,7 @@ from typing import Any
 
 from sims2.common.logging import config_logging, handle_exception
 from sims2.dbpf import LIMIT_FOR_CONFLICT, ResourceHeader
-from sims2.simidge._config import config
+from sims2.simidge._config import config, save_config
 from sims2.simidge.search import (
     GROUP_PREFIX,
     CompResource,
@@ -134,6 +136,7 @@ class MainApp(tk.Frame):
             ),
         )
         menucompare.add_command(label="Resources", command=self.compare_resources)
+        menubar.add_command(label="Settings", command=self.settings)
 
     def _add_search_filter(
         self,
@@ -542,6 +545,88 @@ class MainApp(tk.Frame):
         else:
             resources.search_package(config.get("paths", "objects"))
             self.print_search_results(resources.print_resources(printfiles=False))
+
+    def settings(self) -> None:
+        """Open settings dialog for SiMidge."""
+        SettingsDialog(self.master, title="Settings")
+        return SettingsDialog.result  # type: ignore
+
+
+class SettingsDialog(tk.simpledialog.Dialog):
+    """Class to open settings dialog."""
+
+    def body(self, master: tk.Frame) -> tk.Entry:
+        """Create settings dialog body.
+
+        Args:
+            master: Tkinter frame containing this dialog.
+
+        Returns:
+            Widget to first focus.
+        """
+        tk.Label(master, text="Downloads:").grid(row=0)
+        tk.Label(master, text="Objects:").grid(row=1)
+
+        self.downloads = tk.StringVar(value=config.get("paths", "downloads"))
+        self.objects = tk.StringVar(value=config.get("paths", "objects"))
+
+        e1 = tk.Entry(master, textvariable=self.downloads)
+        e2 = tk.Entry(master, textvariable=self.objects)
+
+        e1.grid(row=0, column=1)
+        e2.grid(row=1, column=1)
+
+        tk.Button(master, command=self.set_downloads).grid(row=0, column=2)
+        tk.Button(master, command=self.set_objects).grid(row=1, column=2)
+
+        return e1
+
+    def validate(self) -> bool:
+        """Validate config values.
+
+        Returns:
+            Is valid.
+        """
+        if not Path(self.downloads.get()).is_dir():
+            tk.messagebox.showwarning(
+                "Illegal value",
+                "Not a valid downloads directory.\nPlease try again",
+                parent=self,
+            )
+            return False
+
+        objects: str = self.objects.get()
+        if not Path(objects).is_file() or not objects.endswith(".package"):
+            tk.messagebox.showwarning(
+                "Illegal value",
+                "Not a valid objects.package.\nPlease try again",
+                parent=self,
+            )
+            return False
+
+        return True
+
+    def apply(self) -> None:
+        """Process settings data."""
+        config.set("paths", "downloads", self.downloads.get())
+        config.set("paths", "objects", self.objects.get())
+        save_config()
+
+    def set_downloads(self) -> None:
+        """Configure downloads path."""
+        path: str = tk.filedialog.askdirectory(
+            initialdir=config.get("paths", "downloads"),
+        )
+        if path:
+            self.downloads.set(path)
+
+    def set_objects(self) -> None:
+        """Configure objects.package path."""
+        path: str = tk.filedialog.askopenfilename(
+            initialdir=Path(config.get("paths", "objects")).parent,
+        )
+        if path:
+            self.objects.set(path)
 
 
 def main() -> None:
