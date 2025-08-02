@@ -1,15 +1,9 @@
 """A program for viewing information about your neighborhoods in a tabulated spreadsheet."""
 
+import tkinter as tk
 from logging import Logger, getLogger
 from pathlib import Path
-from tkinter import (
-    BOTH,
-    END,
-    FALSE,
-    Frame,
-    Tk,
-)
-from tkinter.ttk import Notebook, Style, Treeview
+from tkinter import ttk
 
 from sims2.common.logging import config_logging, handle_exception
 from sims2.simtracker._config import config_traits, folders_nhoods
@@ -21,10 +15,10 @@ logger: Logger = getLogger(__name__)
 
 
 # pylint: disable=too-many-ancestors
-class MainApp(Notebook):
+class MainApp(ttk.Notebook):
     """The main GUI application."""
 
-    def __init__(self, master: Tk) -> None:
+    def __init__(self, master: tk.Tk) -> None:
         """Initialize the main GUI application with a Tkinter root.
 
         Args:
@@ -37,7 +31,7 @@ class MainApp(Notebook):
 
         self._add_nhood_frame()
 
-        self.trees: dict[str, Treeview] = {}
+        self.trees: dict[str, ttk.Treeview] = {}
 
         self._add_sims_tree(
             "Sims",
@@ -178,18 +172,18 @@ class MainApp(Notebook):
             [75 for i in range(10)],
         )
 
-        tab: Frame = Frame(self)
+        tab: tk.Frame = tk.Frame(self)
         self.add(tab, text="Bio")
-        Style().configure("Bio.Treeview", rowheight=50)
-        tree: Treeview = Treeview(
+        ttk.Style().configure("Bio.Treeview", rowheight=50)
+        tree: ttk.Treeview = ttk.Treeview(
             tab,
             style="Bio.Treeview",
             columns=["Bio"],
         )
-        tree.column("#0", width=150, stretch=FALSE)
+        tree.column("#0", width=150, stretch=tk.FALSE)
         tree.heading("#0", text="Name")
         tree.heading("Bio", text="Bio")
-        tree.pack(expand=True, fill=BOTH)
+        tree.pack(expand=True, fill=tk.BOTH)
         self.trees["Bios"] = tree
 
         self._add_sort_tree("Pets", ["Family", "Age"], [100, 50])
@@ -200,10 +194,10 @@ class MainApp(Notebook):
             [50, 50, 50, 50],
         )
 
-        self.pack(expand=True, fill=BOTH)
+        self.pack(expand=True, fill=tk.BOTH)
 
     def _add_nhood_frame(self) -> None:
-        nhoods: Frame = Frame(self)
+        nhoods: tk.Frame = tk.Frame(self)
         folders: list[tuple[str, Path]] = []
         nhoods_folder: Path
         for nhoods_folder in folders_nhoods:
@@ -236,7 +230,7 @@ class MainApp(Notebook):
         self.add(nhoods, text="Neighborhoods")
 
     def _add_sort_tree(self, text: str, columns: list[str], widths: list[int]) -> None:
-        tab: Frame = Frame(self)
+        tab: tk.Frame = tk.Frame(self)
         self.add(tab, text=text)
 
         tree: NonSimsTree = NonSimsTree(tab, columns, widths)
@@ -245,7 +239,7 @@ class MainApp(Notebook):
         self.trees[text] = tree
 
     def _add_sims_tree(self, text: str, columns: list[str], widths: list[int]) -> None:
-        tab: Frame = Frame(self)
+        tab: tk.Frame = tk.Frame(self)
         self.add(tab, text=text)
 
         tree: SimsTree = SimsTree(tab, columns, widths)
@@ -260,7 +254,7 @@ class MainApp(Notebook):
             nhood: Identifier of neighborhood.
             nhoods_folder: Folder containing neighborhood.
         """
-        tree: Treeview
+        tree: ttk.Treeview
         for tree in self.trees.values():
             tree.delete(*tree.get_children())
 
@@ -272,7 +266,7 @@ class MainApp(Notebook):
             if sim.species != b"\x00\x00":
                 self.trees["Pets"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[families[sim.fam].name, sim.age],
                 )
@@ -296,7 +290,7 @@ class MainApp(Notebook):
                     continue
                 self.trees["Sims"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]} ({int.from_bytes(i, byteorder='little')})",
                     values=[
                         families[sim.fam].name,
@@ -317,7 +311,7 @@ class MainApp(Notebook):
                 if config_traits:
                     self.trees["Traits"].insert(
                         "",
-                        END,
+                        tk.END,
                         text=f"{sim.name[0]} {sim.name[1]}",
                         values=[
                             sim.traits[0],
@@ -329,7 +323,7 @@ class MainApp(Notebook):
                     )
                 self.trees["Interests"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         sim.interests.environment,
@@ -354,7 +348,7 @@ class MainApp(Notebook):
                 )
                 self.trees["Hobbies"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         sim.oth,
@@ -372,7 +366,7 @@ class MainApp(Notebook):
                 )
                 self.trees["Jobs"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         sim.skills.cooking,
@@ -390,7 +384,7 @@ class MainApp(Notebook):
                 )
                 self.trees["Chemistry"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         sim.sexuality,
@@ -409,7 +403,7 @@ class MainApp(Notebook):
                 )
                 self.trees["Genetics"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         sim.genes.skin.dominant,
@@ -424,7 +418,7 @@ class MainApp(Notebook):
                 )
                 self.trees["Supernatural"].insert(
                     "",
-                    END,
+                    tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
                     values=[
                         "True" if sim.is_supernatural(SupernaturalFlags.GHOST) else "",
@@ -450,7 +444,7 @@ class MainApp(Notebook):
                 if sim.bio:
                     self.trees["Bios"].insert(
                         "",
-                        END,
+                        tk.END,
                         text=f"{sim.name[0]} {sim.name[1]}",
                         values=[sim.bio],
                     )
@@ -465,7 +459,7 @@ class MainApp(Notebook):
                 continue
             self.trees["Families"].insert(
                 "",
-                END,
+                tk.END,
                 text=f"{family.name}",
                 values=[
                     family.day,
@@ -482,7 +476,7 @@ def main() -> None:
     """Main function for running simtracker."""
     config_logging("simtracker")
 
-    root: Tk = Tk()
+    root: tk.Tk = tk.Tk()
     _app: MainApp = MainApp(root)
 
     root.report_callback_exception = handle_exception

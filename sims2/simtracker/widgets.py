@@ -1,29 +1,19 @@
 """Custom widgets for SimTracker."""
 # pylint: disable=too-many-ancestors
 
-from tkinter import (
-    BOTH,
-    FALSE,
-    RIGHT,
-    Event,
-    Frame,
-    Misc,
-    PhotoImage,
-    Scrollbar,
-    Y,
-)
-from tkinter.ttk import Button, Treeview
+import tkinter as tk
+from tkinter import ttk
 from typing import Any, Literal
 
-tabs: list[Treeview] = []
+tabs: list[ttk.Treeview] = []
 
 
-class ImageButton(Button):
+class ImageButton(ttk.Button):
     """Tk Button widget with image on it."""
 
     def __init__(
         self,
-        master: Misc | None,
+        master: tk.Misc | None,
         *args: Any,
         imgfile: str | None,
         imgwidth: int | None,
@@ -41,21 +31,21 @@ class ImageButton(Button):
             **kwargs: Other keyword arguments for button and image.
         """
         if "image" in kwargs:
-            self.image: PhotoImage = kwargs.pop("image")
+            self.image: tk.PhotoImage = kwargs.pop("image")
         elif imgfile:
             img_kwargs: dict[str, Any] = {}
             if imgwidth:
                 img_kwargs["width"] = imgwidth
             if imgheight:
                 img_kwargs["height"] = imgheight
-            self.image = PhotoImage(file=imgfile, **img_kwargs)
+            self.image = tk.PhotoImage(file=imgfile, **img_kwargs)
         super().__init__(master, *args, image=self.image, **kwargs)
 
 
-class SortTree(Treeview):
+class SortTree(ttk.Treeview):
     """Tk Treeview widget that can be sorted."""
 
-    def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+    def __init__(self, master: tk.Frame, columns: list[str], widths: list[int]) -> None:
         """Construct a sorttree with parent master, columns, and widths.
 
         Args:
@@ -63,14 +53,14 @@ class SortTree(Treeview):
             columns: List of column names.
             widths: List of column widths.
         """
-        scrollbar = Scrollbar(master)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar = tk.Scrollbar(master)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         super().__init__(master, columns=columns, yscrollcommand=scrollbar.set)
 
         scrollbar.config(command=self.yview)
 
-        self.column("#0", width=150, stretch=FALSE)
+        self.column("#0", width=150, stretch=tk.FALSE)
         self.heading(
             "#0",
             text="Name",
@@ -80,7 +70,7 @@ class SortTree(Treeview):
         i: int
         j: str
         for i, j in enumerate(self["columns"]):
-            self.column(j, width=widths[i], stretch=FALSE)
+            self.column(j, width=widths[i], stretch=tk.FALSE)
             self.heading(
                 j,
                 text=j,
@@ -126,7 +116,7 @@ class SortTree(Treeview):
             reverse: Whether to sort in reverse.
         """
 
-    def right_click(self, event: Event) -> None:
+    def right_click(self, event: tk.Event) -> None:
         """On right click, identify column heading clicked on and sort by that column."""
         if self.identify("region", event.x, event.y) == "heading":
             column: str = self.identify_column(event.x)
@@ -135,7 +125,7 @@ class SortTree(Treeview):
     def pack(self, *args: Any, **kwargs: Any) -> None:
         """Pack configure."""
         expand: bool = kwargs.pop("expand", True)
-        fill: Literal["none", "x", "y", "both"] = kwargs.pop("fill", BOTH)
+        fill: Literal["none", "x", "y", "both"] = kwargs.pop("fill", tk.BOTH)
 
         super().pack(*args, expand=expand, fill=fill, **kwargs)
 
@@ -143,7 +133,7 @@ class SortTree(Treeview):
 class SimsTree(SortTree):
     """Tk Treeview widget that can be sorted together with other SimsTree widgets."""
 
-    def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+    def __init__(self, master: tk.Frame, columns: list[str], widths: list[int]) -> None:
         """Construct a sorttree with parent master, columns, and widths.
 
         Args:
@@ -155,9 +145,9 @@ class SimsTree(SortTree):
         self.bind("<Button-2>", self.unsort)
 
     @staticmethod
-    def unsort(_event: Event) -> None:
+    def unsort(_event: tk.Event) -> None:
         """Undo any sorting."""
-        tab: Treeview
+        tab: ttk.Treeview
         for tab in tabs:
             if not isinstance(tab, SimsTree):
                 continue
@@ -178,7 +168,7 @@ class SimsTree(SortTree):
             reverse=reverse,
         )
 
-        tab: Treeview
+        tab: ttk.Treeview
         for tab in tabs:
             if not isinstance(tab, SimsTree):
                 continue
@@ -193,7 +183,7 @@ class SimsTree(SortTree):
 class NonSimsTree(SortTree):
     """Tk Treeview widget that can be sorted independently of other SortTree widgets."""
 
-    def __init__(self, master: Frame, columns: list[str], widths: list[int]) -> None:
+    def __init__(self, master: tk.Frame, columns: list[str], widths: list[int]) -> None:
         """Construct a sorttree with parent master, columns, and widths.
 
         Args:
@@ -204,7 +194,7 @@ class NonSimsTree(SortTree):
         super().__init__(master, columns, widths)
         self.bind("<Button-2>", self.unsort)
 
-    def unsort(self, _event: Event) -> None:
+    def unsort(self, _event: tk.Event) -> None:
         """Undo any sorting."""
         children: list[str] = list(self.get_children())
         children.sort()

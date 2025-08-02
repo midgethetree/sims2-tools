@@ -1,32 +1,13 @@
 """A tool for searching in .package files."""
 
+import tkinter as tk
+import tkinter.filedialog
 import xml.etree.ElementTree as ET
 from binascii import unhexlify
 from dataclasses import dataclass
 from enum import Enum
 from logging import Logger, getLogger
 from pathlib import Path
-from tkinter import (
-    DISABLED,
-    END,
-    LEFT,
-    NORMAL,
-    RIGHT,
-    Button,
-    Entry,
-    Frame,
-    IntVar,
-    Label,
-    Menu,
-    OptionMenu,
-    Radiobutton,
-    Scrollbar,
-    StringVar,
-    Text,
-    Tk,
-    Y,
-)
-from tkinter.filedialog import askdirectory, askopenfilename, askopenfilenames
 from typing import Any
 
 from sims2.common.logging import config_logging, handle_exception
@@ -56,11 +37,11 @@ class SearchFilter:
         target: String to search for in resource contents.
     """
 
-    rtype: StringVar
-    group: StringVar
-    instance: StringVar
-    name: StringVar
-    target: StringVar
+    rtype: tk.StringVar
+    group: tk.StringVar
+    instance: tk.StringVar
+    name: tk.StringVar
+    target: tk.StringVar
 
 
 class SearchType(Enum):
@@ -72,10 +53,10 @@ class SearchType(Enum):
     FOLDER = 4
 
 
-class MainApp(Frame):
+class MainApp(tk.Frame):
     """The main GUI application."""
 
-    def __init__(self, master: Tk) -> None:
+    def __init__(self, master: tk.Tk) -> None:
         """Initialize the main GUI application with a Tkinter root.
 
         Args:
@@ -89,43 +70,43 @@ class MainApp(Frame):
         self._add_menubar(master)
 
         self.filter: SearchFilter = self._add_search_filter()
-        self.var_file: IntVar = self._add_searchtype_radio()
+        self.var_file: tk.IntVar = self._add_searchtype_radio()
 
-        frame_bottom: Frame = Frame(self)
-        self.button_search: Button = Button(
+        frame_bottom: tk.Frame = tk.Frame(self)
+        self.button_search: tk.Button = tk.Button(
             frame_bottom,
             text="Search",
             command=self.search,
-            state=DISABLED,
+            state=tk.DISABLED,
         )
-        self.button_search.pack(side=LEFT)
-        self.button_clear: Button = Button(
+        self.button_search.pack(side=tk.LEFT)
+        self.button_clear: tk.Button = tk.Button(
             frame_bottom,
             text="Clear Results",
             command=self.clear_search_results,
-            state=DISABLED,
+            state=tk.DISABLED,
         )
-        self.button_clear.pack(side=LEFT)
+        self.button_clear.pack(side=tk.LEFT)
         frame_bottom.pack()
 
-        scrollbar: Scrollbar = Scrollbar(self)
-        scrollbar.pack(side=RIGHT, fill=Y)
-        self.search_results: Text = Text(
+        scrollbar: tk.Scrollbar = tk.Scrollbar(self)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.search_results: tk.Text = tk.Text(
             self,
             yscrollcommand=scrollbar.set,
-            state=DISABLED,
+            state=tk.DISABLED,
         )
         self.search_results.pack()
         scrollbar.config(command=self.search_results.yview)
 
         self.pack()
 
-    def _add_menubar(self, master: Tk) -> None:
-        menubar: Menu = Menu()
+    def _add_menubar(self, master: tk.Tk) -> None:
+        menubar: tk.Menu = tk.Menu()
         master["menu"] = menubar
-        menufind: Menu = Menu(menubar, tearoff=False)
+        menufind: tk.Menu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="Find", menu=menufind)
-        menuconflicts: Menu = Menu(menufind, tearoff=False)
+        menuconflicts: tk.Menu = tk.Menu(menufind, tearoff=False)
         menufind.add_cascade(label="Conflicts", menu=menuconflicts)
         menuconflicts.add_command(label="All", command=self.find_conflicts)
         menuconflicts.add_command(label="With File", command=self.find_conflicts_file)
@@ -135,7 +116,7 @@ class MainApp(Frame):
             label="Translated / Empty Strings",
             command=self.find_translations,
         )
-        menucompare: Menu = Menu(menubar, tearoff=False)
+        menucompare: tk.Menu = tk.Menu(menubar, tearoff=False)
         menubar.add_cascade(label="Compare", menu=menucompare)
         menucompare.add_command(
             label="Packages (changed)",
@@ -157,20 +138,20 @@ class MainApp(Frame):
     def _add_search_filter(
         self,
     ) -> SearchFilter:
-        frame_top: Frame = Frame(self)
-        frame_left: Frame = Frame(frame_top)
-        frame_right: Frame = Frame(frame_top)
+        frame_top: tk.Frame = tk.Frame(self)
+        frame_left: tk.Frame = tk.Frame(frame_top)
+        frame_right: tk.Frame = tk.Frame(frame_top)
 
-        Label(frame_left, text="Type:").pack()
-        Label(frame_left, text="Group:").pack()
-        Label(frame_left, text="Instance:").pack()
-        Label(frame_left, text="Name:").pack()
-        Label(frame_left, text="Target:").pack()
+        tk.Label(frame_left, text="Type:").pack()
+        tk.Label(frame_left, text="Group:").pack()
+        tk.Label(frame_left, text="Instance:").pack()
+        tk.Label(frame_left, text="Name:").pack()
+        tk.Label(frame_left, text="Target:").pack()
 
-        search_type: StringVar = StringVar()
+        search_type: tk.StringVar = tk.StringVar()
         search_type.set("Any")
         search_type.trace("w", self._verify_filters)
-        OptionMenu(
+        tk.OptionMenu(
             frame_right,
             search_type,
             "Any",
@@ -191,22 +172,22 @@ class MainApp(Frame):
             "XHTN",
         ).pack()
 
-        search_group: StringVar = StringVar()
+        search_group: tk.StringVar = tk.StringVar()
         search_group.trace("w", self._verify_filters)
-        Entry(frame_right, textvariable=search_group, width=13).pack()
+        tk.Entry(frame_right, textvariable=search_group, width=13).pack()
 
-        search_instance: StringVar = StringVar()
+        search_instance: tk.StringVar = tk.StringVar()
         search_instance.trace("w", self._verify_filters)
-        Entry(frame_right, textvariable=search_instance, width=13).pack()
+        tk.Entry(frame_right, textvariable=search_instance, width=13).pack()
 
-        search_name: StringVar = StringVar()
-        Entry(frame_right, textvariable=search_name, width=13).pack()
+        search_name: tk.StringVar = tk.StringVar()
+        tk.Entry(frame_right, textvariable=search_name, width=13).pack()
 
-        search_target: StringVar = StringVar()
-        Entry(frame_right, textvariable=search_target, width=13).pack()
+        search_target: tk.StringVar = tk.StringVar()
+        tk.Entry(frame_right, textvariable=search_target, width=13).pack()
 
-        frame_left.pack(side=LEFT)
-        frame_right.pack(side=LEFT)
+        frame_left.pack(side=tk.LEFT)
+        frame_right.pack(side=tk.LEFT)
         frame_top.pack()
 
         return SearchFilter(
@@ -217,50 +198,50 @@ class MainApp(Frame):
             search_target,
         )
 
-    def _add_searchtype_radio(self) -> IntVar:
-        frame_radio: Frame = Frame(self)
-        var_file: IntVar = IntVar()
+    def _add_searchtype_radio(self) -> tk.IntVar:
+        frame_radio: tk.Frame = tk.Frame(self)
+        var_file: tk.IntVar = tk.IntVar()
         var_file.set(SearchType.OBJECTS.value)
-        Radiobutton(
+        tk.Radiobutton(
             frame_radio,
             text="Objects",
             variable=var_file,
             value=SearchType.OBJECTS.value,
-        ).pack(side=LEFT)
-        Radiobutton(
+        ).pack(side=tk.LEFT)
+        tk.Radiobutton(
             frame_radio,
             text="Downloads",
             variable=var_file,
             value=SearchType.DOWNLOADS.value,
-        ).pack(side=LEFT)
-        Radiobutton(
+        ).pack(side=tk.LEFT)
+        tk.Radiobutton(
             frame_radio,
             text="Other File(s)",
             variable=var_file,
             value=SearchType.FILES.value,
-        ).pack(side=LEFT)
-        Radiobutton(
+        ).pack(side=tk.LEFT)
+        tk.Radiobutton(
             frame_radio,
             text="Other Folder",
             variable=var_file,
             value=SearchType.FOLDER.value,
-        ).pack(side=LEFT)
+        ).pack(side=tk.LEFT)
         frame_radio.pack()
 
         return var_file
 
     def clear_search_results(self) -> None:
         """Clear search results."""
-        self.button_clear["state"] = DISABLED
-        self.search_results["state"] = NORMAL
-        self.search_results.delete("1.0", END)
+        self.button_clear["state"] = tk.DISABLED
+        self.search_results["state"] = tk.NORMAL
+        self.search_results.delete("1.0", tk.END)
 
     def print_search_results(self, chars: str) -> None:
         """Print search results."""
-        self.button_clear["state"] = NORMAL
-        self.search_results["state"] = NORMAL
-        self.search_results.insert(END, chars)
-        self.search_results["state"] = DISABLED
+        self.button_clear["state"] = tk.NORMAL
+        self.search_results["state"] = tk.NORMAL
+        self.search_results.insert(tk.END, chars)
+        self.search_results["state"] = tk.DISABLED
 
     def find_conflicts(self) -> None:
         """Find conflicting mods in downloads folder."""
@@ -281,7 +262,7 @@ class MainApp(Frame):
         """Find mods conflicting with a selected package."""
         self.clear_search_results()
 
-        mod = askopenfilename(
+        mod = tk.filedialog.askopenfilename(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -309,7 +290,9 @@ class MainApp(Frame):
             filter_group=GROUP_PREFIX,
         )
         resources.search_folder(
-            askdirectory(initialdir=config.get("paths", "downloads")),
+            tk.filedialog.askdirectory(
+                initialdir=config.get("paths", "downloads"),
+            ),
             limit=LIMIT_FOR_CONFLICT,
         )
 
@@ -362,7 +345,7 @@ class MainApp(Frame):
 
         resources: ResourceSearch = ResourceSearch([b"NOCB", b"VAHB", b"GPJ"])
 
-        files = askopenfilenames(
+        files = tk.filedialog.askopenfilenames(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -385,7 +368,7 @@ class MainApp(Frame):
         """Compare selected resource with original copy in objects.package."""
         self.clear_search_results()
 
-        filename: str = askopenfilename(
+        filename: str = tk.filedialog.askopenfilename(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("Extracted resources", "*.simpe.xml")],
         )
@@ -457,9 +440,9 @@ class MainApp(Frame):
             and len(self.filter.instance.get().split("x")[-1])
             not in {INSTANCE_LENGTH, INSTANCE_LENGTH_SHORT}
         ):
-            self.button_search["state"] = DISABLED
+            self.button_search["state"] = tk.DISABLED
         else:
-            self.button_search["state"] = NORMAL
+            self.button_search["state"] = tk.NORMAL
 
     def _get_search_type(self) -> tuple[bytes, list[bytes]]:
         stype: str = self.filter.rtype.get()
@@ -533,7 +516,7 @@ class MainApp(Frame):
         )
 
         if self.var_file.get() == SearchType.FOLDER.value:
-            folder: str = askdirectory()
+            folder: str = tk.filedialog.askdirectory()
             if not folder:
                 return
             resources.search_folder(folder)
@@ -542,7 +525,9 @@ class MainApp(Frame):
             resources.search_folder(config.get("paths", "downloads"))
             self.print_search_results(resources.print_resources())
         elif self.var_file.get() == SearchType.FILES.value:
-            files = askopenfilenames(initialdir=config.get("paths", "downloads"))
+            files = tk.filedialog.askopenfilenames(
+                initialdir=config.get("paths", "downloads"),
+            )
             if len(files) == 0:
                 return
 
@@ -563,7 +548,7 @@ def main() -> None:
     """Main function for running SiMidge."""
     config_logging("simidge")
 
-    root: Tk = Tk()
+    root: tk.Tk = tk.Tk()
     _app: MainApp = MainApp(root)
 
     root.report_callback_exception = handle_exception
