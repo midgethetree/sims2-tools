@@ -4,19 +4,18 @@ import logging
 import os
 import sys
 from logging.handlers import RotatingFileHandler
-from os import environ
 from pathlib import Path
 from types import TracebackType
 
 
 def config_logging(appname: str) -> None:
     """Configure the logging system."""
-    if "APPDATA" in environ:
-        statehome: Path = Path(environ["APPDATA"])
+    if "APPDATA" in os.environ:
+        statehome: Path = Path(os.environ["APPDATA"])
     elif "XDG_STATE_HOME" in os.environ:
-        statehome = Path(environ["XDG_STATE_HOME"])
+        statehome = Path(os.environ["XDG_STATE_HOME"])
     else:
-        statehome = Path(environ["HOME"]) / ".local/state"
+        statehome = Path(os.environ["HOME"]) / ".local/state"
 
     (statehome / appname).mkdir(parents=True, exist_ok=True)
 
