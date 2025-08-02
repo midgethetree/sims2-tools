@@ -8,6 +8,7 @@
   - AppData\Roaming (Windows)
   - $XDG_STATE_HOME (Linux/MacOS)
   - ~/.local/state (Linux/MacOS if $XDG_STATE_HOME is not set)
+- simidge: added settings dialog to allow changing the paths to Downloads and objects.package
 
 ### Added
 
