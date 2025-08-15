@@ -548,7 +548,7 @@ class MainApp(tk.Frame):
     def settings(self) -> None:
         """Open settings dialog for SiMidge."""
         SettingsDialog(self.master, title="Settings")
-        return SettingsDialog.result  # type: ignore
+        return SettingsDialog.result  # pyright: ignore[reportAttributeAccessIssue]
 
 
 class SettingsDialog(tkinter.simpledialog.Dialog):

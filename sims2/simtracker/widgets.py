@@ -74,7 +74,7 @@ class SortTree(ttk.Treeview):
             self.heading(
                 j,
                 text=j,
-                command=lambda column=j: self.sort_column(column, reverse=False),  # type: ignore
+                command=lambda column=j: self.sort_column(column, reverse=False),
             )
 
         self.bind("<Button-3>", self.right_click)
