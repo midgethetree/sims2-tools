@@ -9,7 +9,7 @@ from sims2.common.logging import config_logging, handle_exception
 from sims2.simtracker._config import config_traits, folders_nhoods
 from sims2.simtracker.search import families, search_nhood, sims
 from sims2.simtracker.sim import Family, Sim, SupernaturalFlags, TurnOns1
-from sims2.simtracker.widgets import ImageButton, NonSimsTree, SimsTree
+from sims2.simtracker.widgets import ImageButton, SimsTree, SortTree
 
 logger: Logger = getLogger(__name__)
 
@@ -233,7 +233,7 @@ class MainApp(ttk.Notebook):
         tab: tk.Frame = tk.Frame(self)
         self.add(tab, text=text)
 
-        tree: NonSimsTree = NonSimsTree(tab, columns, widths)
+        tree: SortTree = SortTree(tab, columns, widths)
         tree.pack()
 
         self.trees[text] = tree

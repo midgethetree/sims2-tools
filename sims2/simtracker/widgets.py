@@ -78,8 +78,30 @@ class SortTree(ttk.Treeview):
             )
 
         self.bind("<Button-3>", self.right_click)
+        self.bind("<Button-2>", self.middle_click)
 
         tabs.append(self)
+
+    def sort(self, cols: list[tuple[str | int, str]]) -> None:
+        """Sort tree.
+
+        Args:
+            cols: Sorted list of tuples with value and identifier for each row in column.
+        """
+        i: int
+        k: str
+        for i, (_, k) in enumerate(cols):
+            self.move(k, "", i)
+
+    def unsort(self) -> None:
+        """Undo any sorting."""
+        children: list[str] = list(self.get_children())
+        children.sort()
+
+        j: int
+        k: str
+        for j, k in enumerate(children):
+            self.move(k, "", j)
 
     def get_sorted_columns(
         self,
@@ -108,19 +130,29 @@ class SortTree(ttk.Treeview):
         cols.sort(reverse=reverse, key=lambda i: i[0])
         return cols
 
-    def sort_column(self, _column: str, *, reverse: bool) -> None:
+    def sort_column(self, column: str, *, reverse: bool) -> None:
         """Sort by column.
 
         Args:
             column: Name of column to sort by.
             reverse: Whether to sort in reverse.
         """
+        cols: list[tuple[str | int, str]] = self.get_sorted_columns(
+            column,
+            reverse=reverse,
+        )
+
+        self.sort(cols)
 
     def right_click(self, event: tk.Event) -> None:
-        """On right click, identify column heading clicked on and sort by that column."""
+        """On right click, identify column heading clicked on and sort by that column in reverse."""
         if self.identify("region", event.x, event.y) == "heading":
             column: str = self.identify_column(event.x)
             self.sort_column(column, reverse=True)
+
+    def middle_click(self, _: tk.Event) -> None:
+        """On middle click, undo any sorting."""
+        self.unsort()
 
     def pack(self, *args: Any, **kwargs: Any) -> None:
         """Pack configure."""
@@ -132,77 +164,6 @@ class SortTree(ttk.Treeview):
 
 class SimsTree(SortTree):
     """Tk Treeview widget that can be sorted together with other SimsTree widgets."""
-
-    def __init__(self, master: tk.Frame, columns: list[str], widths: list[int]) -> None:
-        """Construct a sorttree with parent master, columns, and widths.
-
-        Args:
-            master: Tk frame containing this treeview.
-            columns: List of column names.
-            widths: List of column widths.
-        """
-        super().__init__(master, columns, widths)
-        self.bind("<Button-2>", self.unsort)
-
-    @staticmethod
-    def unsort(_event: tk.Event) -> None:
-        """Undo any sorting."""
-        tab: ttk.Treeview
-        for tab in tabs:
-            if not isinstance(tab, SimsTree):
-                continue
-            children: list[str] = list(tab.get_children())
-            children.sort()
-            for j, k in enumerate(children):
-                tab.move(k, "", j)
-
-    def sort_column(self, column: str, *, reverse: bool) -> None:
-        """Sort by column.
-
-        Args:
-            column: Name of column to sort by.
-            reverse: Whether to sort in reverse.
-        """
-        cols: list[tuple[str | int, str]] = super().get_sorted_columns(
-            column,
-            reverse=reverse,
-        )
-
-        tab: ttk.Treeview
-        for tab in tabs:
-            if not isinstance(tab, SimsTree):
-                continue
-
-            i: int
-            _j: str | int
-            k: str
-            for i, (_j, k) in enumerate(cols):
-                tab.move(k, "", i)
-
-
-class NonSimsTree(SortTree):
-    """Tk Treeview widget that can be sorted independently of other SortTree widgets."""
-
-    def __init__(self, master: tk.Frame, columns: list[str], widths: list[int]) -> None:
-        """Construct a sorttree with parent master, columns, and widths.
-
-        Args:
-            master: Tk frame containing this treeview.
-            columns: List of column names.
-            widths: List of column widths.
-        """
-        super().__init__(master, columns, widths)
-        self.bind("<Button-2>", self.unsort)
-
-    def unsort(self, _event: tk.Event) -> None:
-        """Undo any sorting."""
-        children: list[str] = list(self.get_children())
-        children.sort()
-
-        j: int
-        k: str
-        for j, k in enumerate(children):
-            self.move(k, "", j)
 
     def sort_column(self, column: str, *, reverse: bool) -> None:
         """Sort by column.
@@ -216,8 +177,16 @@ class NonSimsTree(SortTree):
             reverse=reverse,
         )
 
-        i: int
-        _j: str | int
-        k: str
-        for i, (_j, k) in enumerate(cols):
-            self.move(k, "", i)
+        tab: ttk.Treeview
+        for tab in tabs:
+            if not isinstance(tab, SimsTree):
+                continue
+            tab.sort(cols)
+
+    def middle_click(self, _: tk.Event) -> None:  # noqa: PLR6301
+        """On middle click, undo any sorting."""
+        tab: ttk.Treeview
+        for tab in tabs:
+            if not isinstance(tab, SimsTree):
+                continue
+            tab.unsort()
