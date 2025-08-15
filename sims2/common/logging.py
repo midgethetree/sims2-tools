@@ -9,7 +9,11 @@ from types import TracebackType
 
 
 def config_logging(appname: str) -> None:
-    """Configure the logging system."""
+    """Configure the logging system.
+
+    Args:
+        appname: Name of tool being run.
+    """
     if "APPDATA" in os.environ:
         statehome: Path = Path(os.environ["APPDATA"])
     elif "XDG_STATE_HOME" in os.environ:
