@@ -57,7 +57,7 @@ class MainApp(ttk.Notebook):
             self._add_sims_tree(
                 "Traits",
                 ["Trait 1", "Trait 2", "Trait 3", "Trait 4", "Trait 5"],
-                [150 for i in range(5)],
+                [150 for _ in range(5)],
             )
 
         self._add_sims_tree(
@@ -82,7 +82,7 @@ class MainApp(ttk.Notebook):
                 "Toys",
                 "Sci-Fi",
             ],
-            [43 for i in range(18)],
+            [43 for _ in range(18)],
         )
 
         self._add_sims_tree(
@@ -152,7 +152,7 @@ class MainApp(ttk.Notebook):
                 "Eyes (D)",
                 "Eyes (r)",
             ],
-            [75 for i in range(8)],
+            [75 for _ in range(8)],
         )
 
         self._add_sims_tree(
@@ -169,7 +169,7 @@ class MainApp(ttk.Notebook):
                 "Mermaid",
                 "Fairy",
             ],
-            [75 for i in range(10)],
+            [75 for _ in range(10)],
         )
 
         tab: tk.Frame = tk.Frame(self)
@@ -223,7 +223,7 @@ class MainApp(ttk.Notebook):
                     imgheight=225,
                     text=n[0],
                     compound="top",
-                    command=lambda args=n: self.search(*args),  # type: ignore
+                    command=lambda args=n: self.search(*args),
                 )
                 button.grid(row=i // 3, column=i % 3)
 
@@ -477,7 +477,7 @@ def main() -> None:
     config_logging("simtracker")
 
     root: tk.Tk = tk.Tk()
-    _app: MainApp = MainApp(root)
+    MainApp(root)
 
     root.report_callback_exception = handle_exception
 

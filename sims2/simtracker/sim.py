@@ -534,7 +534,7 @@ class Sim:
                     turn_off = config.get("turnons", str(index), fallback="Unknown")
                 index += 1
 
-        turn_ons.extend("" for x in range(len(turn_ons), 2))
+        turn_ons.extend("" for _ in range(len(turn_ons), 2))
         turn_ons.append(turn_off)
 
         return turn_ons

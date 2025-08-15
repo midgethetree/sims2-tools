@@ -265,7 +265,7 @@ class MainApp(tk.Frame):
         """Find mods conflicting with a selected package."""
         self.clear_search_results()
 
-        mod = tk.filedialog.askopenfilename(
+        mod = tkinter.filedialog.askopenfilename(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -293,7 +293,7 @@ class MainApp(tk.Frame):
             filter_group=GROUP_PREFIX,
         )
         resources.search_folder(
-            tk.filedialog.askdirectory(
+            tkinter.filedialog.askdirectory(
                 initialdir=config.get("paths", "downloads"),
             ),
             limit=LIMIT_FOR_CONFLICT,
@@ -323,9 +323,8 @@ class MainApp(tk.Frame):
         )
 
         rootdir: Path
-        _dirs: list[str]
         files: list[str]
-        for rootdir, _dirs, files in Path(config.get("paths", "downloads")).walk(
+        for rootdir, _, files in Path(config.get("paths", "downloads")).walk(
             top_down=False,
         ):
             file: str
@@ -348,7 +347,7 @@ class MainApp(tk.Frame):
 
         resources: ResourceSearch = ResourceSearch([b"NOCB", b"VAHB", b"GPJ"])
 
-        files = tk.filedialog.askopenfilenames(
+        files = tkinter.filedialog.askopenfilenames(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -371,7 +370,7 @@ class MainApp(tk.Frame):
         """Compare selected resource with original copy in objects.package."""
         self.clear_search_results()
 
-        filename: str = tk.filedialog.askopenfilename(
+        filename: str = tkinter.filedialog.askopenfilename(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("Extracted resources", "*.simpe.xml")],
         )
@@ -436,7 +435,7 @@ class MainApp(tk.Frame):
             resources.print_resource(rtype, group, classid, instance),
         )
 
-    def _verify_filters(self, *_args: Any) -> None:
+    def _verify_filters(self, *_: Any) -> None:
         if (
             self.filter.rtype.get() == "Any"
             and len(self.filter.group.get().split("x")[-1]) != INSTANCE_LENGTH
@@ -519,7 +518,7 @@ class MainApp(tk.Frame):
         )
 
         if self.var_file.get() == SearchType.FOLDER.value:
-            folder: str = tk.filedialog.askdirectory()
+            folder: str = tkinter.filedialog.askdirectory()
             if not folder:
                 return
             resources.search_folder(folder)
@@ -528,7 +527,7 @@ class MainApp(tk.Frame):
             resources.search_folder(config.get("paths", "downloads"))
             self.print_search_results(resources.print_resources())
         elif self.var_file.get() == SearchType.FILES.value:
-            files = tk.filedialog.askopenfilenames(
+            files = tkinter.filedialog.askopenfilenames(
                 initialdir=config.get("paths", "downloads"),
             )
             if len(files) == 0:
@@ -552,7 +551,7 @@ class MainApp(tk.Frame):
         return SettingsDialog.result  # type: ignore
 
 
-class SettingsDialog(tk.simpledialog.Dialog):
+class SettingsDialog(tkinter.simpledialog.Dialog):
     """Class to open settings dialog."""
 
     def body(self, master: tk.Frame) -> tk.Entry:
@@ -588,7 +587,7 @@ class SettingsDialog(tk.simpledialog.Dialog):
             Is valid.
         """
         if not Path(self.downloads.get()).is_dir():
-            tk.messagebox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Illegal value",
                 "Not a valid downloads directory.\nPlease try again",
                 parent=self,
@@ -597,7 +596,7 @@ class SettingsDialog(tk.simpledialog.Dialog):
 
         objects: str = self.objects.get()
         if not Path(objects).is_file() or not objects.endswith(".package"):
-            tk.messagebox.showwarning(
+            tkinter.messagebox.showwarning(
                 "Illegal value",
                 "Not a valid objects.package.\nPlease try again",
                 parent=self,
@@ -614,7 +613,7 @@ class SettingsDialog(tk.simpledialog.Dialog):
 
     def set_downloads(self) -> None:
         """Configure downloads path."""
-        path: str = tk.filedialog.askdirectory(
+        path: str = tkinter.filedialog.askdirectory(
             initialdir=config.get("paths", "downloads"),
         )
         if path:
@@ -622,7 +621,7 @@ class SettingsDialog(tk.simpledialog.Dialog):
 
     def set_objects(self) -> None:
         """Configure objects.package path."""
-        path: str = tk.filedialog.askopenfilename(
+        path: str = tkinter.filedialog.askopenfilename(
             initialdir=Path(config.get("paths", "objects")).parent,
         )
         if path:
@@ -634,7 +633,7 @@ def main() -> None:
     config_logging("simidge")
 
     root: tk.Tk = tk.Tk()
-    _app: MainApp = MainApp(root)
+    MainApp(root)
 
     root.report_callback_exception = handle_exception
 

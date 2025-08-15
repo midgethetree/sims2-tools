@@ -234,7 +234,7 @@ def _search_nhood_inventory(inventory: Resource | None, nids: list[bytes]) -> No
     for sim in sims.values():
         sim.set_aspirations()
         if config_traits:
-            for _i in range(len(sim.traits), 5):
+            for _ in range(len(sim.traits), 5):
                 sim.traits.append("")
 
 

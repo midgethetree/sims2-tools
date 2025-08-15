@@ -203,9 +203,8 @@ class ResourceSearch:
             folder = Path(folder)
 
         rootdir: Path
-        _dirs: list[str]
         files: list[str]
-        for rootdir, _dirs, files in folder.walk(top_down=False):
+        for rootdir, _, files in folder.walk(top_down=False):
             file: str
             for file in (i for i in files if i[-8:].lower() == ".package"):
                 self.search_package(rootdir / file, limit=limit, unique=unique)
@@ -333,8 +332,6 @@ class ResourceSearch:
         Returns:
             True if Resource's type is valid for this ResourceSearch, false otherwise.
         """
-        if not isinstance(v, CompResource):
-            return False
         if v.rtype not in self._dict:
             return False
 
