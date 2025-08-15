@@ -153,7 +153,7 @@ class MainApp(tk.Frame):
 
         search_type: tk.StringVar = tk.StringVar()
         search_type.set("Any")
-        search_type.trace("w", self._verify_filters)
+        search_type.trace_add("write", self._verify_filters)
         tk.OptionMenu(
             frame_right,
             search_type,
@@ -176,11 +176,11 @@ class MainApp(tk.Frame):
         ).pack()
 
         search_group: tk.StringVar = tk.StringVar()
-        search_group.trace("w", self._verify_filters)
+        search_group.trace_add("write", self._verify_filters)
         tk.Entry(frame_right, textvariable=search_group, width=13).pack()
 
         search_instance: tk.StringVar = tk.StringVar()
-        search_instance.trace("w", self._verify_filters)
+        search_instance.trace_add("write", self._verify_filters)
         tk.Entry(frame_right, textvariable=search_instance, width=13).pack()
 
         search_name: tk.StringVar = tk.StringVar()
