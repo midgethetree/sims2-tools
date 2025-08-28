@@ -18,7 +18,7 @@ def save(config: ConfigParser, path: Path) -> None:
 
 def load(
     path: Path,
-    defaults: dict,
+    defaults: dict[str, dict[str, str]],
     *,
     default_file: Path | None = None,
 ) -> ConfigParser:
@@ -35,14 +35,14 @@ def load(
     config: ConfigParser = ConfigParser()
 
     if default_file and default_file.exists():
-        config.read(default_file)
+        _ = config.read(default_file)
 
     if path.exists():
-        config.read(path)
+        _ = config.read(path)
         return config
 
     if isinstance(defaults, Path):
-        config.read(defaults)
+        _ = config.read(defaults)
     else:
         config.read_dict(defaults)
 

@@ -65,7 +65,7 @@ class Resource:  # pylint: disable=too-few-public-methods
         self,
         package: bytes,
         header: ResourceHeader,
-        limit: float = float("inf"),
+        limit: float | None = None,
     ) -> None:
         """Initialize a resource within a package from its header.
 
@@ -97,7 +97,7 @@ class Resource:  # pylint: disable=too-few-public-methods
             except UnicodeDecodeError:
                 self.name = ""
 
-    def _decompress(self, limit: float = float("inf")) -> None:
+    def _decompress(self, limit: float | None = None) -> None:
         x: bytes = b""
         index: int = 9
         while index < len(self.contents):
@@ -137,7 +137,7 @@ class Resource:  # pylint: disable=too-few-public-methods
             while numcopy > 0:
                 x += bytes({x[-offset]})
                 numcopy -= 1
-            if len(x) >= limit:
+            if limit and len(x) >= limit:
                 break
         self.contents = x
 
@@ -148,8 +148,7 @@ class Resource:  # pylint: disable=too-few-public-methods
             String describing the resource.
         """
         chars: str = ""
-        if self.name is not None:
-            chars += f"{self.name}\n"
+        chars += f"{self.name}\n"
         chars += f"File Type: {self.rtype[::-1].decode('utf-8')}\n"
         chars += f"Group ID: 0x{str(hexlify(self.group[::-1]))[2:-1]}\n"
         chars += f"Instance ID: 0x{str(hexlify(self.instance[::-1]))[2:-1]}\n"

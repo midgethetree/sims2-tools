@@ -76,6 +76,8 @@ def _search_nhood_pkg(nhood: str, package: bytes) -> dict[bytes, bytes]:
                 dnas.append(header)
             case b"\x8e\x54\x95\xcd":
                 wants.append(header)
+            case _:
+                pass
 
     _search_nhood_strs(strs, package)
     _search_nhood_business_owners(owners)
@@ -263,6 +265,8 @@ def _search_sim_inventory(inventory: bytes, sim: Sim) -> None:
                     sim.spnflags += SupernaturalFlags.FAIRY
                 case b"\x9b\x27":
                     sim.spnflags += SupernaturalFlags.GHOST
+                case _:
+                    pass
 
 
 def _search_nhood_chars(directory: Path, guid2nid: dict[bytes, bytes]) -> None:
@@ -282,6 +286,8 @@ def _search_nhood_chars(directory: Path, guid2nid: dict[bytes, bytes]) -> None:
                     guid = Resource(package, header).contents[92:96]
                 case b"SSTC":
                     name = Resource(package, header).contents[68:].split(b"\x01")
+                case _:
+                    pass
 
         if guid not in guid2nid:
             continue
@@ -324,3 +330,5 @@ def _search_nhood_lots(directory: Path, nhood: str) -> None:
                             resource[index + 16 : index + 20],
                             byteorder="little",
                         )
+                    case _:
+                        pass

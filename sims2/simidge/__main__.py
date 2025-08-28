@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from logging import Logger, getLogger
 from pathlib import Path
-from typing import Any
+from typing import Any, override
 
 from sims2.common.logging import config_logging, handle_exception
 from sims2.dbpf import LIMIT_FOR_CONFLICT, ResourceHeader
@@ -99,7 +99,7 @@ class MainApp(tk.Frame):
             state=tk.DISABLED,
         )
         self.search_results.pack()
-        scrollbar.config(command=self.search_results.yview)
+        _ = scrollbar.config(command=self.search_results.yview)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
         self.pack()
 
@@ -153,7 +153,7 @@ class MainApp(tk.Frame):
 
         search_type: tk.StringVar = tk.StringVar()
         search_type.set("Any")
-        search_type.trace_add("write", self._verify_filters)
+        _ = search_type.trace_add("write", self._verify_filters)
         tk.OptionMenu(
             frame_right,
             search_type,
@@ -176,11 +176,11 @@ class MainApp(tk.Frame):
         ).pack()
 
         search_group: tk.StringVar = tk.StringVar()
-        search_group.trace_add("write", self._verify_filters)
+        _ = search_group.trace_add("write", self._verify_filters)
         tk.Entry(frame_right, textvariable=search_group, width=13).pack()
 
         search_instance: tk.StringVar = tk.StringVar()
-        search_instance.trace_add("write", self._verify_filters)
+        _ = search_instance.trace_add("write", self._verify_filters)
         tk.Entry(frame_right, textvariable=search_instance, width=13).pack()
 
         search_name: tk.StringVar = tk.StringVar()
@@ -336,11 +336,11 @@ class MainApp(tk.Frame):
     def compare_packages(
         self,
         *,
-        limit: float = float("inf"),
+        limit: float | None = None,
         min_files: int = 1,
-        max_files: float = float("inf"),
+        max_files: float | None = None,
         min_versions: int = 1,
-        max_versions: float = float("inf"),
+        max_versions: float | None = None,
     ) -> None:
         """Compare resources in selected packages."""
         self.clear_search_results()
@@ -409,7 +409,7 @@ class MainApp(tk.Frame):
             filter_group=group,
             filter_instance=instance,
         )
-        resources.append(
+        _ = resources.append(
             CompResource(
                 resource,
                 ResourceHeader(
@@ -435,7 +435,7 @@ class MainApp(tk.Frame):
             resources.print_resource(rtype, group, classid, instance),
         )
 
-    def _verify_filters(self, *_: Any) -> None:
+    def _verify_filters(self, *_: Any) -> None:  # pyright: ignore[reportExplicitAny]
         if (
             self.filter.rtype.get() == "Any"
             and len(self.filter.group.get().split("x")[-1]) != INSTANCE_LENGTH
@@ -547,13 +547,14 @@ class MainApp(tk.Frame):
 
     def settings(self) -> None:
         """Open settings dialog for SiMidge."""
-        SettingsDialog(self.master, title="Settings")
-        return SettingsDialog.result  # pyright: ignore[reportAttributeAccessIssue]
+        _ = SettingsDialog(self.master, title="Settings")
+        return SettingsDialog.result  # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType, reportUnknownVariableType]
 
 
 class SettingsDialog(tkinter.simpledialog.Dialog):
     """Class to open settings dialog."""
 
+    @override
     def body(self, master: tk.Frame) -> tk.Entry:
         """Create settings dialog body.
 
@@ -566,8 +567,10 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
         tk.Label(master, text="Downloads:").grid(row=0)
         tk.Label(master, text="Objects:").grid(row=1)
 
-        self.downloads = tk.StringVar(value=config.get("paths", "downloads"))
-        self.objects = tk.StringVar(value=config.get("paths", "objects"))
+        self.downloads: tk.StringVar = tk.StringVar(  # pyright: ignore[reportUninitializedInstanceVariable]
+            value=config.get("paths", "downloads"),
+        )
+        self.objects: tk.StringVar = tk.StringVar(value=config.get("paths", "objects"))  # pyright: ignore[reportUninitializedInstanceVariable]
 
         e1 = tk.Entry(master, textvariable=self.downloads)
         e2 = tk.Entry(master, textvariable=self.objects)
@@ -580,6 +583,7 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
 
         return e1
 
+    @override
     def validate(self) -> bool:
         """Validate config values.
 
@@ -587,7 +591,7 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
             Is valid.
         """
         if not Path(self.downloads.get()).is_dir():
-            tkinter.messagebox.showwarning(
+            _ = tkinter.messagebox.showwarning(
                 "Illegal value",
                 "Not a valid downloads directory.\nPlease try again",
                 parent=self,
@@ -596,7 +600,7 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
 
         objects: str = self.objects.get()
         if not Path(objects).is_file() or not objects.endswith(".package"):
-            tkinter.messagebox.showwarning(
+            _ = tkinter.messagebox.showwarning(
                 "Illegal value",
                 "Not a valid objects.package.\nPlease try again",
                 parent=self,
@@ -605,6 +609,7 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
 
         return True
 
+    @override
     def apply(self) -> None:
         """Process settings data."""
         config.set("paths", "downloads", self.downloads.get())
@@ -633,7 +638,7 @@ def main() -> None:
     config_logging("simidge")
 
     root: tk.Tk = tk.Tk()
-    MainApp(root)
+    _ = MainApp(root)
 
     root.report_callback_exception = handle_exception
 

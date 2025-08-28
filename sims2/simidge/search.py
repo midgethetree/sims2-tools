@@ -28,7 +28,7 @@ class CompResource(Resource):
         self,
         package: bytes,
         header: ResourceHeader,
-        limit: float = float("inf"),
+        limit: float | None = None,
     ) -> None:
         """Initialize a resource within a package from its header.
 
@@ -179,16 +179,14 @@ class ResourceSearch:
             if isinstance(self.filter_name, str):
                 if self.filter_name not in resource.name.lower():
                     return False
-            elif (
-                isinstance(self.filter_name, list) and resource.name in self.filter_name
-            ):
+            elif resource.name in self.filter_name:
                 return False
         return True
 
     def search_folder(
         self,
         folder: Path | str,
-        limit: float = float("inf"),
+        limit: float | None = None,
         *,
         unique: bool = True,
     ) -> None:
@@ -212,7 +210,7 @@ class ResourceSearch:
     def search_package(
         self,
         path: Path | str,
-        limit: float = float("inf"),
+        limit: float | None = None,
         *,
         unique: bool = True,
     ) -> None:
@@ -278,7 +276,7 @@ class ResourceSearch:
 
         return num == 0 or len(strings) != num or max(lengths) <= 1
 
-    def search_strs(self, path: Path | str, limit: float = float("inf")) -> None:
+    def search_strs(self, path: Path | str, limit: float | None = None) -> None:
         """Find string resources that have translations, empty strings, descriptions, or can otherwise be cleaned by SimPE.
 
         Args:
@@ -311,7 +309,7 @@ class ResourceSearch:
                 continue
 
             if self.validate_strs(resource):
-                self.append(resource, path.name, resource.contents)
+                _ = self.append(resource, path.name, resource.contents)
 
     def append(
         self,
@@ -368,9 +366,9 @@ class ResourceSearch:
         self,
         *,
         min_files: int = 1,
-        max_files: float = float("inf"),
+        max_files: float | None = None,
         min_versions: int = 1,
-        max_versions: float = float("inf"),
+        max_versions: float | None = None,
         printfiles: bool = True,
     ) -> str:
         """Get information about all of the resources in the ResourceSearch in a printable string.
@@ -382,17 +380,19 @@ class ResourceSearch:
         count: int = 0
         resource: CompResource
         for resource in self.get_items():
-            if (
-                len(resource.files) >= min_files
-                and len(resource.files) <= max_files
-                and len(set(resource.versions)) >= min_versions
-                and len(set(resource.versions)) <= max_versions
+            if len(resource.files) < min_files or (
+                max_files and len(set(resource.files)) > max_files
             ):
-                chars += resource.print()
-                if printfiles:
-                    chars += resource.print_files()
-                chars += "\n"
-                count += 1
+                continue
+            if len(set(resource.versions)) < min_versions or (
+                max_versions and len(set(resource.versions)) > max_versions
+            ):
+                continue
+            chars += resource.print()
+            if printfiles:
+                chars += resource.print_files()
+            chars += "\n"
+            count += 1
         chars += f"{count} results found."
         return chars
 

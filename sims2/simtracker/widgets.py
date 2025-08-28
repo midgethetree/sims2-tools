@@ -3,7 +3,7 @@
 
 import tkinter as tk
 from tkinter import ttk
-from typing import Any, Literal
+from typing import Any, Literal, override
 
 tabs: list[ttk.Treeview] = []
 
@@ -14,11 +14,11 @@ class ImageButton(ttk.Button):
     def __init__(
         self,
         master: tk.Misc | None,
-        *args: Any,
+        *args: Any,  # pyright: ignore[reportAny, reportExplicitAny]
         imgfile: str | None,
         imgwidth: int | None,
         imgheight: int | None,
-        **kwargs: Any,
+        **kwargs: Any,  # pyright: ignore[reportAny, reportExplicitAny]
     ) -> None:
         """Construct an image button with parent master and image.
 
@@ -33,12 +33,12 @@ class ImageButton(ttk.Button):
         if "image" in kwargs:
             self.image: tk.PhotoImage = kwargs.pop("image")
         elif imgfile:
-            img_kwargs: dict[str, Any] = {}
+            img_kwargs: dict[str, Any] = {}  # pyright: ignore[reportExplicitAny]
             if imgwidth:
                 img_kwargs["width"] = imgwidth
             if imgheight:
                 img_kwargs["height"] = imgheight
-            self.image = tk.PhotoImage(file=imgfile, **img_kwargs)
+            self.image = tk.PhotoImage(file=imgfile, **img_kwargs)  # pyright: ignore[reportAny]
         super().__init__(master, *args, image=self.image, **kwargs)
 
 
@@ -58,9 +58,9 @@ class SortTree(ttk.Treeview):
 
         super().__init__(master, columns=columns, yscrollcommand=scrollbar.set)
 
-        scrollbar.config(command=self.yview)
+        _ = scrollbar.config(command=self.yview)  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-        self.column("#0", width=150, stretch=tk.FALSE)
+        _ = self.column("#0", width=150, stretch=tk.FALSE)
         self.heading(
             "#0",
             text="Name",
@@ -69,16 +69,16 @@ class SortTree(ttk.Treeview):
 
         i: int
         j: str
-        for i, j in enumerate(self["columns"]):
-            self.column(j, width=widths[i], stretch=tk.FALSE)
+        for i, j in enumerate(self["columns"]):  # pyright: ignore[reportAny]
+            _ = self.column(j, width=widths[i], stretch=tk.FALSE)
             self.heading(
                 j,
                 text=j,
                 command=lambda column=j: self.sort_column(column, reverse=False),
             )
 
-        self.bind("<Button-3>", self.right_click)
-        self.bind("<Button-2>", self.middle_click)
+        _ = self.bind("<Button-3>", self.right_click)
+        _ = self.bind("<Button-2>", self.middle_click)
 
         tabs.append(self)
 
@@ -124,7 +124,7 @@ class SortTree(ttk.Treeview):
             ]
         else:
             try:
-                cols = [(int(self.set(i, column)), i) for i in self.get_children()]
+                cols = [(int(self.set(i, column)), i) for i in self.get_children()]  # pyright: ignore[reportAny]
             except ValueError:
                 cols = [(self.set(i, column), i) for i in self.get_children()]
         cols.sort(reverse=reverse, key=lambda i: i[0])
@@ -146,7 +146,7 @@ class SortTree(ttk.Treeview):
 
     def right_click(self, event: tk.Event) -> None:
         """On right click, identify column heading clicked on and sort by that column in reverse."""
-        if self.identify("region", event.x, event.y) == "heading":
+        if self.identify("region", event.x, event.y) == "heading":  # pyright: ignore[reportUnknownMemberType]
             column: str = self.identify_column(event.x)
             self.sort_column(column, reverse=True)
 
@@ -154,17 +154,22 @@ class SortTree(ttk.Treeview):
         """On middle click, undo any sorting."""
         self.unsort()
 
-    def pack(self, *args: Any, **kwargs: Any) -> None:
+    @override
+    def pack(
+        self,
+        *args: Any,  # pyright: ignore[reportAny, reportExplicitAny]
+        expand: bool = True,
+        fill: Literal["none", "x", "y", "both"] = tk.BOTH,
+        **kwargs: Any,  # pyright: ignore[reportAny, reportExplicitAny]
+    ) -> None:
         """Pack configure."""
-        expand: bool = kwargs.pop("expand", True)
-        fill: Literal["none", "x", "y", "both"] = kwargs.pop("fill", tk.BOTH)
-
-        super().pack(*args, expand=expand, fill=fill, **kwargs)
+        super().pack(*args, expand=expand, fill=fill, **kwargs)  # pyright: ignore[reportAny]
 
 
 class SimsTree(SortTree):
     """Tk Treeview widget that can be sorted together with other SimsTree widgets."""
 
+    @override
     def sort_column(self, column: str, *, reverse: bool) -> None:
         """Sort by column.
 
@@ -183,6 +188,7 @@ class SimsTree(SortTree):
                 continue
             tab.sort(cols)
 
+    @override
     def middle_click(self, _: tk.Event) -> None:  # noqa: PLR6301
         """On middle click, undo any sorting."""
         tab: ttk.Treeview

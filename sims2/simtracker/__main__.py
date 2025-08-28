@@ -174,13 +174,13 @@ class MainApp(ttk.Notebook):
 
         tab: tk.Frame = tk.Frame(self)
         self.add(tab, text="Bio")
-        ttk.Style().configure("Bio.Treeview", rowheight=50)
+        ttk.Style().configure("Bio.Treeview", rowheight=50)  # pyright: ignore[reportUnknownMemberType]
         tree: ttk.Treeview = ttk.Treeview(
             tab,
             style="Bio.Treeview",
             columns=["Bio"],
         )
-        tree.column("#0", width=150, stretch=tk.FALSE)
+        _ = tree.column("#0", width=150, stretch=tk.FALSE)
         tree.heading("#0", text="Name")
         tree.heading("Bio", text="Bio")
         tree.pack(expand=True, fill=tk.BOTH)
@@ -223,7 +223,7 @@ class MainApp(ttk.Notebook):
                     imgheight=225,
                     text=n[0],
                     compound="top",
-                    command=lambda args=n: self.search(*args),
+                    command=lambda x=n[0], y=n[1]: self.search(x, y),
                 )
                 button.grid(row=i // 3, column=i % 3)
 
@@ -264,7 +264,7 @@ class MainApp(ttk.Notebook):
         sim: Sim
         for i, sim in sims.items():
             if sim.species != b"\x00\x00":
-                self.trees["Pets"].insert(
+                _ = self.trees["Pets"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -288,7 +288,7 @@ class MainApp(ttk.Notebook):
                     "Hot Dog Chef",
                 }:
                     continue
-                self.trees["Sims"].insert(
+                _ = self.trees["Sims"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]} ({int.from_bytes(i, byteorder='little')})",
@@ -309,7 +309,7 @@ class MainApp(ttk.Notebook):
                     ],
                 )
                 if config_traits:
-                    self.trees["Traits"].insert(
+                    _ = self.trees["Traits"].insert(
                         "",
                         tk.END,
                         text=f"{sim.name[0]} {sim.name[1]}",
@@ -321,7 +321,7 @@ class MainApp(ttk.Notebook):
                             sim.traits[4],
                         ],
                     )
-                self.trees["Interests"].insert(
+                _ = self.trees["Interests"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -346,7 +346,7 @@ class MainApp(ttk.Notebook):
                         sim.interests.scifi,
                     ],
                 )
-                self.trees["Hobbies"].insert(
+                _ = self.trees["Hobbies"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -364,7 +364,7 @@ class MainApp(ttk.Notebook):
                         sim.hobbies.music,
                     ],
                 )
-                self.trees["Jobs"].insert(
+                _ = self.trees["Jobs"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -382,7 +382,7 @@ class MainApp(ttk.Notebook):
                         sim.job.level if sim.job.level != 0 else "",
                     ],
                 )
-                self.trees["Chemistry"].insert(
+                _ = self.trees["Chemistry"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -401,7 +401,7 @@ class MainApp(ttk.Notebook):
                         sim.tos[-1],
                     ],
                 )
-                self.trees["Genetics"].insert(
+                _ = self.trees["Genetics"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -416,7 +416,7 @@ class MainApp(ttk.Notebook):
                         sim.genes.eyes.recessive,
                     ],
                 )
-                self.trees["Supernatural"].insert(
+                _ = self.trees["Supernatural"].insert(
                     "",
                     tk.END,
                     text=f"{sim.name[0]} {sim.name[1]}",
@@ -442,7 +442,7 @@ class MainApp(ttk.Notebook):
                     ],
                 )
                 if sim.bio:
-                    self.trees["Bios"].insert(
+                    _ = self.trees["Bios"].insert(
                         "",
                         tk.END,
                         text=f"{sim.name[0]} {sim.name[1]}",
@@ -457,7 +457,7 @@ class MainApp(ttk.Notebook):
                 or int.from_bytes(i, byteorder="little") >= min_special_fam
             ):
                 continue
-            self.trees["Families"].insert(
+            _ = self.trees["Families"].insert(
                 "",
                 tk.END,
                 text=f"{family.name}",
@@ -469,7 +469,7 @@ class MainApp(ttk.Notebook):
                 ],
             )
 
-        self.select(self.tabs()[1])
+        self.select(self.tabs()[1])  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
 
 def main() -> None:
@@ -477,7 +477,7 @@ def main() -> None:
     config_logging("simtracker")
 
     root: tk.Tk = tk.Tk()
-    MainApp(root)
+    _ = MainApp(root)
 
     root.report_callback_exception = handle_exception
 
