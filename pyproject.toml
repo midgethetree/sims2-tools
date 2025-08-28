@@ -10,8 +10,8 @@ requires-python = ">=3.13"
 dependencies = []
 
 [project.scripts]
-simidge = "sims2.simidge.__main__:main"
-simtracker = "sims2.simtracker.__main__:main"
+simidge = "sims2.simidge:main"
+simtracker = "sims2.simtracker:main"
 
 [build-system]
 requires = ["setuptools >= 77.0.3"]
