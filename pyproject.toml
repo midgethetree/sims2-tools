@@ -16,3 +16,7 @@ simtracker = "sims2.simtracker.__main__:main"
 [build-system]
 requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["sims2"]
