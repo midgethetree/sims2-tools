@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 from logging import Logger, getLogger
 from pathlib import Path
-from typing import Any, override
+from typing import Any, Literal, override
 
 from sims2.common.logging import config_logging, handle_exception
 from sims2.dbpf import LIMIT_FOR_CONFLICT, ResourceHeader
@@ -347,7 +347,7 @@ class MainApp(tk.Frame):
 
         resources: ResourceSearch = ResourceSearch([b"NOCB", b"VAHB", b"GPJ"])
 
-        files = tkinter.filedialog.askopenfilenames(
+        files: tuple[str, ...] | Literal[""] = tkinter.filedialog.askopenfilenames(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -527,7 +527,7 @@ class MainApp(tk.Frame):
             resources.search_folder(config.get("paths", "downloads"))
             self.print_search_results(resources.print_resources())
         elif self.var_file.get() == SearchType.FILES.value:
-            files = tkinter.filedialog.askopenfilenames(
+            files: tuple[str, ...] | Literal[""] = tkinter.filedialog.askopenfilenames(
                 initialdir=config.get("paths", "downloads"),
             )
             if len(files) == 0:
@@ -572,8 +572,8 @@ class SettingsDialog(tkinter.simpledialog.Dialog):
         )
         self.objects: tk.StringVar = tk.StringVar(value=config.get("paths", "objects"))  # pyright: ignore[reportUninitializedInstanceVariable]
 
-        e1 = tk.Entry(master, textvariable=self.downloads)
-        e2 = tk.Entry(master, textvariable=self.objects)
+        e1: tk.Entry = tk.Entry(master, textvariable=self.downloads)
+        e2: tk.Entry = tk.Entry(master, textvariable=self.objects)
 
         e1.grid(row=0, column=1)
         e2.grid(row=1, column=1)
