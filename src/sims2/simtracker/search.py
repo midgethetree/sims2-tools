@@ -246,7 +246,7 @@ def _search_sim_inventory(inventory: bytes, sim: Sim) -> None:
         sim.asp[1] = int.from_bytes(inventory[index : index + 2], byteorder="little")
 
     if config_traits:
-        items = inventory.split(b"\xbb\x87\x00")
+        items: list[bytes] = inventory.split(b"\xbb\x87\x00")
         if len(items) > 1:
             item: bytes
             for item in items:
@@ -307,7 +307,7 @@ def _search_nhood_lots(directory: Path, nhood: str) -> None:
         if lot > 0:
             with (directory / f"{nhood}_Lot{lot}.package").open("rb") as file:
                 logger.debug("searching lot %s in neighborhood %s", lot, nhood)
-                package = file.read()
+                package: bytes = file.read()
 
             header: ResourceHeader
             for header in get_headers(package):
@@ -321,7 +321,7 @@ def _search_nhood_lots(directory: Path, nhood: str) -> None:
                         )
                     case b"\x8b\xe2\x1b\xb2":
                         resource = Resource(package, header).contents
-                        index = int.from_bytes(resource[4:8], byteorder="little")
+                        index: int = int.from_bytes(resource[4:8], byteorder="little")
                         family.season = int.from_bytes(
                             resource[index + 12 : index + 16],
                             byteorder="little",

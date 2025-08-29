@@ -53,7 +53,7 @@ class SortTree(ttk.Treeview):
             columns: List of column names.
             widths: List of column widths.
         """
-        scrollbar = tk.Scrollbar(master)
+        scrollbar: tk.Scrollbar = tk.Scrollbar(master)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         super().__init__(master, columns=columns, yscrollcommand=scrollbar.set)

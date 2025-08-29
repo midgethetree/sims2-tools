@@ -458,7 +458,7 @@ class Sim:
             byteorder="little",
         ) + int.from_bytes(resource[324:326], byteorder="little")
         if self.species != b"\x00\x00":
-            lifestage = resource[128:130]
+            lifestage: bytes = resource[128:130]
             if lifestage > b"\x13\x00":
                 age += 2
             elif lifestage == b"\x13\x00":

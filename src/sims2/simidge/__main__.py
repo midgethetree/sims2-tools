@@ -265,7 +265,7 @@ class MainApp(tk.Frame):
         """Find mods conflicting with a selected package."""
         self.clear_search_results()
 
-        mod = tkinter.filedialog.askopenfilename(
+        mod: str = tkinter.filedialog.askopenfilename(
             initialdir=config.get("paths", "downloads"),
             filetypes=[("TS2 packages", "*.package")],
         )
@@ -458,8 +458,8 @@ class MainApp(tk.Frame):
                 b"sATT",
                 b"#RTS",
             ]
-        rtype = stype.encode("utf-8")[::-1]
-        filter_type = [rtype]
+        rtype: bytes = stype.encode("utf-8")[::-1]
+        filter_type: list[bytes] = [rtype]
         return rtype, filter_type
 
     def _get_search_target(self, rtype: bytes) -> bytes | None:

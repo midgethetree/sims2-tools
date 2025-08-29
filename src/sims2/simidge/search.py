@@ -81,10 +81,10 @@ class CompResource(Resource):
 
         chars: str = "Changed Lines:\n"
         for i in range(index, size, 2):
-            x = int.from_bytes(self.versions[0][i : i + 2], byteorder="little")
+            x: int = int.from_bytes(self.versions[0][i : i + 2], byteorder="little")
             if x >= 2**15:
                 x -= 2**16 - 1
-            y = int.from_bytes(self.versions[1][i : i + 2], byteorder="little")
+            y: int = int.from_bytes(self.versions[1][i : i + 2], byteorder="little")
             if y >= 2**15:
                 y -= 2**16 - 1
             if x != y:
@@ -414,6 +414,6 @@ class ResourceSearch:
         Returns:
             String describing the given resource.
         """
-        chars = self._dict[rtype][group][classid][instance].print_versions()
+        chars: str = self._dict[rtype][group][classid][instance].print_versions()
         chars += "\nSearch complete."
         return chars
